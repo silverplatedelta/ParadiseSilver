@@ -154,6 +154,8 @@
 	var/dynamic_heat_resistance = 1
 	///Uses powerloss_dynamic_scaling and combined_gas to lessen the effects of our powerloss functions
 	var/powerloss_inhibitor = 1
+	///value plus T0C = temp at which the SM starts to take damage. Variable for event usage
+	var/heat_penalty_threshold = HEAT_PENALTY_THRESHOLD
 	///Based on co2 percentage, slowly moves between 0 and 1. We use it to calc the powerloss_inhibitor
 	var/powerloss_dynamic_scaling= 0
 	///Affects the amount of radiation the sm makes. We multiply this with power to find the rads.
@@ -200,6 +202,21 @@
 	var/power_changes = TRUE
 	///Disables the sm's proccessing totally.
 	var/processes = TRUE
+
+	//vars used for supermatter events (Anomalous crystal activityw)
+	///no events should occur while the SM is offline. This also allows admins to easily disable them
+	var/events_possible = FALSE
+	///Defaults to false, Only one event should be triggered at a time
+	var/event_active = FALSE
+	///flat multiplies the amount of gas released by the SM.
+	var/gas_multiplier = 1
+	///flat multiplies the heat released by the SM
+	var/heat_multiplier = 1
+	///amount of EER to ADD
+	var/power_additive = 0
+	///last event ran
+	var/last_event = null
+
 
 /obj/machinery/atmospherics/supermatter_crystal/Initialize(mapload)
 	. = ..()
@@ -430,7 +447,7 @@
 			//((((some value between 0.5 and 1 * temp - ((273.15 + 40) * some values between 1 and 10)) * some number between 0.25 and knock your socks off / 150) * 0.25
 			//Heat and mols account for each other, a lot of hot mols are more damaging then a few
 			//Mols start to have a positive effect on damage after 350
-			damage = max(damage + (max(clamp(removed.total_moles() / 200, 0.5, 1) * removed.temperature - ((T0C + HEAT_PENALTY_THRESHOLD)*dynamic_heat_resistance), 0) * mole_heat_penalty / 150 ) * DAMAGE_INCREASE_MULTIPLIER, 0)
+			damage = max(damage + (max(clamp(removed.total_moles() / 200, 0.5, 1) * removed.temperature - ((T0C + heat_penalty_threshold)*dynamic_heat_resistance), 0) * mole_heat_penalty / 150 ) * DAMAGE_INCREASE_MULTIPLIER, 0)
 			//Power only starts affecting damage when it is above 5000
 			damage = max(damage + (max(power - POWER_PENALTY_THRESHOLD, 0)/500) * DAMAGE_INCREASE_MULTIPLIER, 0)
 			//Molar count only starts affecting damage when it is above 1800
@@ -440,7 +457,7 @@
 			//healing damage
 			if(combined_gas < MOLE_PENALTY_THRESHOLD)
 				//Only has a net positive effect when the temp is below 313.15, heals up to 2 damage. Psycologists increase this temp min by up to 45
-				damage = max(damage + (min(removed.temperature - (T0C + HEAT_PENALTY_THRESHOLD), 0) / 150 ), 0)
+				damage = max(damage + (min(removed.temperature - (T0C + heat_penalty_threshold), 0) / 150 ), 0)
 
 			//Check for holes in the SM inner chamber
 			for(var/t in RANGE_TURFS(1, loc))
@@ -529,15 +546,15 @@
 		//Also keep in mind we are only adding this temperature to (efficiency)% of the one tile the rock
 		//is on. An increase of 4*C @ 25% efficiency here results in an increase of 1*C / (#tilesincore) overall.
 		//Power * 0.55 * (some value between 1.5 and 23) / 5
-		removed.temperature += ((device_energy * dynamic_heat_modifier) / THERMAL_RELEASE_MODIFIER)
+		removed.temperature += (((device_energy * dynamic_heat_modifier) / THERMAL_RELEASE_MODIFIER)*heat_multiplier)
 		//We can only emit so much heat, that being 57500
 		removed.temperature = max(0, min(removed.temperature, 2500 * dynamic_heat_modifier))
 
 		//Calculate how much gas to release
 		//Varies based on power and gas content
-		removed.toxins += max((device_energy * dynamic_heat_modifier) / PLASMA_RELEASE_MODIFIER, 0)
+		removed.toxins += max(((device_energy * dynamic_heat_modifier) / PLASMA_RELEASE_MODIFIER)*gas_multiplier, 0)
 		//Varies based on power, gas content, and heat
-		removed.oxygen += max(((device_energy + removed.temperature * dynamic_heat_modifier) - T0C) / OXYGEN_RELEASE_MODIFIER, 0)
+		removed.oxygen += max((((device_energy + removed.temperature * dynamic_heat_modifier) - T0C) / OXYGEN_RELEASE_MODIFIER)*gas_multiplier, 0)
 
 		if(produces_gas)
 			env.merge(removed)
@@ -601,8 +618,9 @@
 			supermatter_anomaly_gen(src, FLUX_ANOMALY, rand(5, 10))
 		if(power > SEVERE_POWER_PENALTY_THRESHOLD && prob(5) || prob(1))
 			supermatter_anomaly_gen(src, GRAVITATIONAL_ANOMALY, rand(5, 10))
-		if((power > SEVERE_POWER_PENALTY_THRESHOLD && prob(2)) || (prob(0.3) && power > POWER_PENALTY_THRESHOLD))
-			supermatter_anomaly_gen(src, PYRO_ANOMALY, rand(5, 10))
+		//commented out due to the rather damanging nature of these. I expect /lots/ of delams after the events are TM/merged, and I feel these being around for every EER spike is a bit too punishing (also they just suck to deal with)
+		//if((power > SEVERE_POWER_PENALTY_THRESHOLD && prob(2)) || (prob(0.3) && power > POWER_PENALTY_THRESHOLD))
+		//	supermatter_anomaly_gen(src, PYRO_ANOMALY, rand(5, 10))
 
 	if(prob(15))
 		supermatter_pull(loc, min(power / 850, 3)) //850, 1700, 2550
@@ -640,7 +658,7 @@
 		//Boom (Mind blown)
 		if(damage > explosion_point)
 			countdown()
-
+	power += power_additive
 	return 1
 
 /obj/machinery/atmospherics/supermatter_crystal/bullet_act(obj/item/projectile/Proj)
