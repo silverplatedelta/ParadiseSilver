@@ -62,8 +62,14 @@
 /obj/effect/mapping_helpers/airlock/access/any/engineering
 	icon_state = "access_helper_eng"
 
-/obj/effect/mapping_helpers/airlock/access/any/engineering/general
+/obj/effect/mapping_helpers/airlock/access/any/engineering/engine_tech
 	access = ACCESS_ENGINE
+
+/obj/effect/mapping_helpers/airlock/access/any/engineering/engineer
+	access = ACCESS_ENGINEER
+
+/obj/effect/mapping_helpers/airlock/access/any/engineering/maint_tech
+	access = ACCESS_MAINT_TECH
 
 /obj/effect/mapping_helpers/airlock/access/any/engineering/equipment
 	access = ACCESS_ENGINE_EQUIP

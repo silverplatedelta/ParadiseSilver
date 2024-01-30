@@ -259,10 +259,6 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/awaystart) //Without this away mission
 	name = "Assistant"
 	icon_state = "Assistant"
 
-/obj/effect/landmark/start/atmospheric
-	name = "Life Support Specialist"
-	icon_state = "Atmos"
-
 /obj/effect/landmark/start/blueshield
 	name = "Blueshield"
 	icon_state = "BS"
@@ -327,6 +323,10 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/awaystart) //Without this away mission
 	name = "Explorer"
 	icon_state = "Explorer"
 
+/obj/effect/landmark/start/engine_tech
+	name = "Engine Technician"
+	icon_state = "Engi"
+
 /obj/effect/landmark/start/engineer
 	name = "Station Engineer"
 	icon_state = "Engi"
@@ -363,6 +363,9 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/awaystart) //Without this away mission
 	name = "Magistrate"
 	icon_state = "Magi"
 
+/obj/effect/landmark/start/maint_tech
+	name = "Maintenance Technician"
+	icon_state = "Engi"
 /obj/effect/landmark/start/mime
 	name = "Mime"
 	icon_state = "Mime"

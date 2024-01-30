@@ -30,8 +30,18 @@
 	icon_state = "engibreak"
 	sound_environment = SOUND_AREA_SMALL_ENCLOSED
 
-/area/station/engineering/equipmentstorage
-	name = "Engineering Equipment Storage"
+/area/station/engineering/engiequipmentstorage
+	name = "Engineer Equipment Storage"
+	icon_state = "engilocker"
+	sound_environment = SOUND_AREA_SMALL_ENCLOSED
+
+/area/station/engineering/enginetechequipmentstorage
+	name = "Engine Tech Equipment Storage"
+	icon_state = "engilocker"
+	sound_environment = SOUND_AREA_SMALL_ENCLOSED
+
+/area/station/engineering/mainttechequipmentstorage
+	name = "Maintenance Technician Equipment Storage"
 	icon_state = "engilocker"
 	sound_environment = SOUND_AREA_SMALL_ENCLOSED
 

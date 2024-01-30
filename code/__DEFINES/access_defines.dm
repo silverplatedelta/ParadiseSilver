@@ -7,11 +7,11 @@
 #define ACCESS_TOX 7
 #define ACCESS_TOX_STORAGE 8
 #define ACCESS_GENETICS 9
-#define ACCESS_ENGINE 10
-#define ACCESS_ENGINE_EQUIP 11
-#define ACCESS_MAINT_TUNNELS 12
+#define ACCESS_ENGINE 10 // Engine room / chamber access / engine tech areas and lockers
+#define ACCESS_ENGINE_EQUIP 11 // SMES / turbine hall access
+#define ACCESS_MAINT_TUNNELS 12 //general maints access
 #define ACCESS_EXTERNAL_AIRLOCKS 13
-#define ACCESS_EMERGENCY_STORAGE 14
+#define ACCESS_EMERGENCY_STORAGE 14 //damage control locker access
 #define ACCESS_CHANGE_IDS 15
 #define ACCESS_AI_UPLOAD 16
 #define ACCESS_TELEPORTER 17
@@ -20,8 +20,8 @@
 #define ACCESS_CAPTAIN 20
 #define ACCESS_ALL_PERSONAL_LOCKERS 21
 #define ACCESS_CHAPEL_OFFICE 22
-#define ACCESS_TECH_STORAGE 23
-#define ACCESS_ATMOSPHERICS 24
+// #define ACCESS_TECH_STORAGE 23 //removed 01-29-2024 as part of engi job rework
+#define ACCESS_ATMOSPHERICS 24 //Atmospherics system access
 #define ACCESS_BAR 25
 #define ACCESS_JANITOR 26
 #define ACCESS_CREMATORIUM 27
@@ -53,7 +53,7 @@
 #define ACCESS_HEADS_VAULT 53
 #define ACCESS_MINING_STATION 54
 #define ACCESS_XENOBIOLOGY 55
-#define ACCESS_CE 56
+#define ACCESS_CE 56 // CE office access
 #define ACCESS_HOP 57
 #define ACCESS_HOS 58
 #define ACCESS_RC_ANNOUNCE 59 //Request console announcements
@@ -66,8 +66,8 @@
 #define ACCESS_PARAMEDIC 66
 #define ACCESS_BLUESHIELD 67
 #define ACCESS_SALVAGE_CAPTAIN 69 // Salvage ship captain's quarters
-// #define ACCESS_MECHANIC 70 // AA07 2021-10-02 - Removed: Kept for history sake
-// #define ACCESS_PILOT 71 // AA07 2021-10-02 - Removed: Kept for history sake
+#define ACCESS_MAINT_TECH 70 //maintnence tech area/lockers access
+#define ACCESS_ENGINEER 71 //Standard engineer access/lockers
 #define ACCESS_NTREP 73
 #define ACCESS_MAGISTRATE 74
 #define ACCESS_MINISAT 75
