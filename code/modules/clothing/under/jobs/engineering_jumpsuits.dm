@@ -30,6 +30,7 @@
 	icon_state = "atmos"
 	item_state = "atmos_suit"
 	item_color = "atmos"
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, RAD = 5, FIRE = 85, ACID = 0)
 	resistance_flags = NONE
 
 /obj/item/clothing/under/rank/engineering/atmospheric_technician/contortionist
@@ -64,7 +65,7 @@
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
 
 /obj/item/clothing/under/rank/engineering/engineer
-	desc = "It's an orange high visibility jumpsuit worn by engineers. It has minor radiation shielding."
+	desc = "It's a yellow and orange high visibility jumpsuit worn by engineers. It has minor radiation shielding."
 	name = "engineer's jumpsuit"
 	icon_state = "engine"
 	item_state = "engi_suit"
@@ -72,6 +73,23 @@
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, RAD = 5, FIRE = 75, ACID = 10)
 	resistance_flags = NONE
 
+/obj/item/clothing/under/rank/engineering/maint_tech
+	desc = "It's an yellow and black high visibility jumpsuit worn by maintenance technicians."
+	name = "engineer's jumpsuit"
+	icon_state = "maint_tech"
+	item_state = "engi_suit"
+	item_color = "engine"
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, RAD = 0, FIRE = 30, ACID = 10)
+	resistance_flags = NONE
+
+/obj/item/clothing/under/rank/engineering/engine_tech
+	desc = "It's an red and black high visibility jumpsuit worn by engine technicians. It has minor radiation shielding."
+	name = "engineer's jumpsuit"
+	icon_state = "maint_tech"
+	item_state = "engi_suit"
+	item_color = "engine"
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, RAD = 5, FIRE = 90, ACID = 20)
+	resistance_flags = NONE
 /obj/item/clothing/under/rank/engineering/engineer/sensor
 	sensor_mode = SENSOR_COORDS
 	random_sensor = FALSE

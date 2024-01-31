@@ -8,10 +8,10 @@
 #define ACCESS_TOX_STORAGE 8
 #define ACCESS_GENETICS 9
 #define ACCESS_ENGINE 10 // Engine room / chamber access / engine tech areas and lockers
-#define ACCESS_ENGINE_EQUIP 11 // SMES / turbine hall access
+#define ACCESS_ENGINE_EQUIP 11 // General engineering supplies/access
 #define ACCESS_MAINT_TUNNELS 12 //general maints access
 #define ACCESS_EXTERNAL_AIRLOCKS 13
-#define ACCESS_EMERGENCY_STORAGE 14 //damage control locker access
+#define ACCESS_EMERGENCY_STORAGE 14 // damage control locker access
 #define ACCESS_CHANGE_IDS 15
 #define ACCESS_AI_UPLOAD 16
 #define ACCESS_TELEPORTER 17

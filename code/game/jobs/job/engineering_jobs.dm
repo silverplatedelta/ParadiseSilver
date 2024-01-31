@@ -63,7 +63,7 @@
 	name = "Engine Technician"
 	jobtype = /datum/job/engineer
 
-	uniform = /obj/item/clothing/under/rank/engineering/engineer
+	uniform = /obj/item/clothing/under/rank/engineering/engine_tech
 	belt = /obj/item/storage/belt/utility/full
 	shoes = /obj/item/clothing/shoes/workboots
 	head = /obj/item/clothing/head/hardhat
@@ -121,7 +121,7 @@
 	supervisors = "the chief engineer"
 	department_head = list("Chief Engineer")
 	selection_color = "#fff5cc"
-	access = list(ACCESS_EVA, ACCESS_MAINT_TECH, ACCESS_MAINT_TUNNELS, ACCESS_EXTERNAL_AIRLOCKS, ACCESS_CONSTRUCTION, ACCESS_MINERAL_STOREROOM)
+	access = list(ACCESS_EVA, ACCESS_MAINT_TECH, ACCESS_MAINT_TUNNELS, ACCESS_EXTERNAL_AIRLOCKS, ACCESS_CONSTRUCTION, ACCESS_MINERAL_STOREROOM, ACCESS_ENGINE_EQUIP)
 	alt_titles = list()
 	minimal_player_age = 10
 	exp_map = list(EXP_TYPE_CREW = 0)
@@ -131,7 +131,7 @@
 	name = "Maintenance Technician"
 	jobtype = /datum/job/engineer
 
-	uniform = /obj/item/clothing/under/rank/engineering/engineer
+	uniform = /obj/item/clothing/under/rank/engineering/maint_tech
 	belt = /obj/item/storage/belt/utility/full
 	shoes = /obj/item/clothing/shoes/workboots
 	head = /obj/item/clothing/head/hardhat

@@ -93,22 +93,62 @@
 	new /obj/item/cartridge/engineering(src)
 	new /obj/item/clothing/head/beret/eng(src)
 
+/obj/structure/closet/secure_closet/engineering_personal_mt
+	name = "maintenance technician's locker"
+	req_access = list(ACCESS_MAINT_TECH)
+	icon_state = "eng_secure"
+	open_door_sprite = "eng_secure_door"
+
+/obj/structure/closet/secure_closet/engineering_personal_mt/populate_contents()
+	if(prob(50))
+		new /obj/item/storage/backpack/industrial(src)
+	else
+		new /obj/item/storage/backpack/satchel_eng(src)
+	new /obj/item/storage/backpack/duffel/engineering(src)
+	new /obj/item/storage/toolbox/mechanical(src)
+	new /obj/item/radio/headset/headset_eng(src)
+	new /obj/item/clothing/under/rank/engineering/engineer(src)
+	new /obj/item/clothing/under/rank/engineering/engineer/skirt(src)
+	new /obj/item/clothing/suit/storage/hazardvest(src)
+	new /obj/item/clothing/mask/gas(src)
+	new /obj/item/clothing/glasses/meson(src)
+	new /obj/item/cartridge/engineering(src)
+	new /obj/item/clothing/head/beret/eng(src)
+
+/obj/structure/closet/secure_closet/engineering_personal_et
+	name = "engine technician's locker"
+	req_access = list(ACCESS_ENGINE)
+	icon_state = "eng_secure"
+	open_door_sprite = "eng_secure_door"
+
+/obj/structure/closet/secure_closet/engineering_personal_et/populate_contents()
+	if(prob(50))
+		new /obj/item/storage/backpack/industrial(src)
+	else
+		new /obj/item/storage/backpack/satchel_eng(src)
+	new /obj/item/storage/backpack/duffel/engineering(src)
+	new /obj/item/storage/toolbox/mechanical(src)
+	new /obj/item/holosign_creator/engineering(src)
+	new /obj/item/radio/headset/headset_eng(src)
+	new /obj/item/clothing/under/rank/engineering/engineer(src)
+	new /obj/item/clothing/under/rank/engineering/engineer/skirt(src)
+	new /obj/item/clothing/suit/storage/hazardvest(src)
+	new /obj/item/clothing/mask/gas(src)
+	new /obj/item/clothing/glasses/meson/engine(src)
+	new /obj/item/cartridge/engineering(src)
+	new /obj/item/clothing/head/beret/eng(src)
+	new /obj/item/rpd(src)
+	new /obj/item/holosign_creator/atmos(src)
+	new /obj/item/cartridge/atmos(src)
 
 /obj/structure/closet/secure_closet/atmos_personal
-	name = "technician's locker"
+	name = "atmospheric supply locker"
 	req_access = list(ACCESS_ATMOSPHERICS)
 	icon_state = "atmos"
 	open_door_sprite = "eng_secure_door"
 
 /obj/structure/closet/secure_closet/atmos_personal/populate_contents()
-	new /obj/item/radio/headset/headset_eng(src)
 	new /obj/item/cartridge/atmos(src)
-	new /obj/item/storage/toolbox/mechanical(src)
-	if(prob(50))
-		new /obj/item/storage/backpack/industrial/atmos(src)
-	else
-		new /obj/item/storage/backpack/satchel_atmos(src)
-	new /obj/item/storage/backpack/duffel/atmos(src)
 	new /obj/item/extinguisher(src)
 	new /obj/item/grenade/gas/oxygen(src)
 	new /obj/item/grenade/gas/oxygen(src)
