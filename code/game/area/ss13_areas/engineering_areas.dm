@@ -67,6 +67,10 @@
 	name = "\improper Supermatter Engine"
 	sound_environment = SOUND_AREA_SMALL_ENCLOSED
 
+/area/station/engineering/engine/turbine_hall
+	name = "\improper Turbine Hall"
+	icon_state = "turbine"
+
 //Solars
 
 /area/station/engineering/solar

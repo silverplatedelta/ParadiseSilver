@@ -83,8 +83,8 @@
 /obj/effect/mapping_helpers/airlock/access/any/engineering/external
 	access = ACCESS_EXTERNAL_AIRLOCKS
 
-/obj/effect/mapping_helpers/airlock/access/any/engineering/tech_storage
-	access = ACCESS_TECH_STORAGE
+/obj/effect/mapping_helpers/airlock/access/any/engineering/maintenance_tech
+	access = ACCESS_MAINT_TECH
 
 /obj/effect/mapping_helpers/airlock/access/any/engineering/atmos
 	access = ACCESS_ATMOSPHERICS
@@ -280,7 +280,7 @@
 /obj/effect/mapping_helpers/airlock/access/all/engineering
 	icon_state = "access_helper_eng"
 
-/obj/effect/mapping_helpers/airlock/access/all/engineering/general
+/obj/effect/mapping_helpers/airlock/access/all/engineering/engine_tech
 	access = ACCESS_ENGINE
 
 /obj/effect/mapping_helpers/airlock/access/all/engineering/equipment
@@ -295,8 +295,8 @@
 /obj/effect/mapping_helpers/airlock/access/all/engineering/external
 	access = ACCESS_EXTERNAL_AIRLOCKS
 
-/obj/effect/mapping_helpers/airlock/access/all/engineering/tech_storage
-	access = ACCESS_TECH_STORAGE
+/obj/effect/mapping_helpers/airlock/access/all/engineering/maintenance_tech
+	access = ACCESS_MAINT_TECH
 
 /obj/effect/mapping_helpers/airlock/access/all/engineering/atmos
 	access = ACCESS_ATMOSPHERICS
