@@ -8292,7 +8292,7 @@
 /obj/structure/sign/securearea{
 	pixel_x = -32
 	},
-/obj/machinery/suit_storage_unit/gamma/secure,
+/obj/machinery/suit_storage_unit/gamma,
 /turf/simulated/floor/mineral/plastitanium/red,
 /area/shuttle/gamma/space)
 "DE" = (
@@ -50118,7 +50118,7 @@ IS
 LN
 LN
 LN
-vy
+NF
 Mb
 LR
 LR

@@ -27,6 +27,7 @@
 			return
 	return ..()
 
+
 /obj/structure/statue/welder_act(mob/user, obj/item/I)
 	if(anchored)
 		return
@@ -37,6 +38,7 @@
 	if(I.use_tool(src, user, 40, volume = I.tool_volume))
 		WELDER_SLICING_SUCCESS_MESSAGE
 		deconstruct(TRUE)
+
 
 /obj/structure/statue/attack_hand(mob/living/user)
 	user.changeNext_move(CLICK_CD_MELEE)

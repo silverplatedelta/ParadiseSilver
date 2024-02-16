@@ -1,5 +1,4 @@
 /mob/Logout()
-	set_typing_indicator(FALSE)
 	SStgui.on_logout(src) // Cleanup any TGUIs the user has open
 	unset_machine()
 	GLOB.player_list -= src

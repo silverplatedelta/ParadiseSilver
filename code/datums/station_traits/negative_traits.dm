@@ -74,7 +74,7 @@
 				E.weight *= weight_multiplier
 				for(var/role_weight in E.role_weights)
 					E.role_weights[role_weight] *= weight_multiplier
-				if(disable_is_one_shot)
+				if(disable_is_one_shot == TRUE)
 					E.one_shot = FALSE
 				modified_event = TRUE
 	if(!modified_event)

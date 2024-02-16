@@ -234,11 +234,10 @@
 
 	var/list/show_flag = list("EXIT" = null) + sortList(flag)
 
-	var/input_flag = tgui_input_list(user, "Choose a flag to disguise this as.", "Choose a flag.", show_flag)
-	if(!input_flag)
-		return
+	var/input_flag = input(user, "Choose a flag to disguise as.", "Choose a flag.") in show_flag
 
-	if(user && (src in user.GetAllContents()))
+	if(user && (src in user.contents))
+
 		var/obj/item/flag/chosen_flag = flag[input_flag]
 
 		if(chosen_flag && !used)
