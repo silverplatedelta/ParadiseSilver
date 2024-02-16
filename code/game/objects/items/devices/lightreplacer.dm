@@ -47,7 +47,7 @@
 	belt_icon = "light_replacer"
 	w_class = WEIGHT_CLASS_SMALL
 	flags = CONDUCT
-	slot_flags = SLOT_BELT
+	slot_flags = SLOT_FLAG_BELT
 	origin_tech = "magnets=3;engineering=4"
 	force = 8
 	var/max_uses = 20
@@ -147,6 +147,7 @@
 		emagged = !emagged
 		playsound(loc, "sparks", 100, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 		update_appearance(UPDATE_NAME|UPDATE_ICON_STATE)
+		return TRUE
 
 /obj/item/lightreplacer/attack_self(mob/user)
 	for(var/obj/machinery/light/target in user.loc)
@@ -227,17 +228,18 @@
 	else
 		return 0
 
-/obj/item/lightreplacer/afterattack(atom/T, mob/U, proximity)
+/obj/item/lightreplacer/afterattack(atom/target_turf, mob/U, proximity)
 	. = ..()
 	if(!proximity && !bluespace_toggle)
 		return
-	if(!isturf(T))
+	var/turf/replace_turf = get_turf(target_turf)
+	if(!istype(replace_turf))
 		return
-	if(get_dist(src, T) >= (U.client.maxview() + 2)) // To prevent people from using it over cameras
+	if(get_dist(src, target_turf) >= (U.client.maxview() + 2)) // To prevent people from using it over cameras
 		return
 
 	var/used = FALSE
-	for(var/atom/A in T)
+	for(var/atom/A in replace_turf)
 		if(!CanUse(U))
 			break
 		used = TRUE

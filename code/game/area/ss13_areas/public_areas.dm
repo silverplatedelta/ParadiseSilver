@@ -132,11 +132,16 @@
 
 /area/station/hallway/secondary/entry/south
 
+/area/station/hallway/secondary/entry/east
+
+/area/station/hallway/secondary/entry/west
+
 /area/station/hallway/secondary/entry/lounge
 	name = "\improper Arrivals Lounge"
 
 /area/station/hallway/secondary/bridge
-
+	name = "\improper Command Hallway"
+	icon_state = "hallC"
 // Other public areas
 
 
@@ -180,6 +185,9 @@
 
 /area/station/public/toilet/female
 	name = "\improper Female Toilets"
+
+/area/station/public/toilet/unisex
+	name = "\improper Unisex Restroom"
 
 /area/station/public/toilet/lockerroom
 	name = "\improper Locker Toilets"

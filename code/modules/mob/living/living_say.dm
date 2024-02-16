@@ -182,6 +182,9 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 		var/list/hsp = handle_speech_problems(message_pieces, verb)
 		verb = hsp["verb"]
 
+	if(cannot_speak_loudly())
+		return whisper(message)
+
 	// Do this so it gets logged for all types of communication
 	var/log_message = "[message_mode ? "([message_mode])" : ""] '[message]'"
 	create_log(SAY_LOG, log_message)
@@ -211,8 +214,13 @@ GLOBAL_LIST_EMPTY(channel_to_radio_key)
 			message_range = first_piece.speaking.get_talkinto_msg_range(message)
 
 		var/msg
-		if(!first_piece.speaking || !(first_piece.speaking.flags & NO_TALK_MSG))
+		if((!first_piece.speaking || !(first_piece.speaking.flags & NO_TALK_MSG)) && client)
 			msg = "<span class='notice'>[src] talks into [used_radios[1]]</span>"
+			var/static/list/special_radio_channels = list("Syndicate", "SyndTeam", "Security", "Procedure", "Command", "Response Team", "Special Ops")
+			if(message_mode in special_radio_channels)
+				SEND_SOUND(src, sound('sound/items/radio_security.ogg', volume = rand(4, 16) * 5 * client.prefs.get_channel_volume(CHANNEL_RADIO_NOISE), channel = CHANNEL_RADIO_NOISE))
+			else
+				SEND_SOUND(src, sound('sound/items/radio_common.ogg', volume = rand(4, 16) * 5 * client.prefs.get_channel_volume(CHANNEL_RADIO_NOISE), channel = CHANNEL_RADIO_NOISE))
 
 		if(msg)
 			for(var/mob/living/M in hearers(5, src) - src)

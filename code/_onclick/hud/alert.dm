@@ -112,6 +112,7 @@
 
 /obj/screen/alert/MouseExited()
 	closeToolTip(usr)
+	return ..()
 
 /obj/screen/alert/proc/do_timeout(mob/M, category)
 	if(!M || !M.alerts)
@@ -336,6 +337,16 @@ or shoot a gun to move around via Newton's 3rd Law of Motion."
 		var/mob/living/L = usr
 		return L.resist()
 
+/obj/screen/alert/direction_lock
+	name = "Direction Lock"
+	desc = "You are facing only one direction, slowing your movement down. Click here to stop the direction lock."
+	icon_state = "direction_lock"
+
+/obj/screen/alert/direction_lock/Click()
+	if(isliving(usr))
+		var/mob/living/L = usr
+		return L.clear_forced_look()
+
 //Constructs
 /obj/screen/alert/holy_fire
 	name = "Holy Fire"
@@ -400,6 +411,26 @@ Recharging stations are available in robotics, the dormitory bathrooms, and the 
 	if(isnymph(usr))
 		var/mob/living/simple_animal/diona/D = usr
 		return D.resist()
+
+/obj/screen/alert/gestalt
+	name = "Merged nymph"
+	desc = "You have merged with one or more diona nymphs. Click here to drop it (or one of them)."
+
+/obj/screen/alert/gestalt/Click()
+	if(!usr || !usr.client)
+		return
+
+	var/list/nymphs = list()
+	for(var/mob/living/simple_animal/diona/D in usr.contents)
+		nymphs += D
+
+	if(length(nymphs) == 1)
+		var/mob/living/simple_animal/diona/D = nymphs[1]
+		D.split(TRUE)
+	else
+		var/mob/living/simple_animal/diona/D = tgui_input_list(usr, "Select a nymph to drop:", "Nymph Dropping", nymphs)
+		if(D in usr.contents)
+			D.split(TRUE)
 
 //Need to cover all use cases - emag, illegal upgrade module, malf AI hack, traitor cyborg
 /obj/screen/alert/hacked
@@ -612,8 +643,6 @@ so as to remain in compliance with the most up-to-date laws."
 	if(!usr || !usr.client)
 		return
 	var/mob/dead/observer/G = usr
-	if(!istype(G))
-		return
 
 	if(poll)
 		var/success
@@ -623,7 +652,7 @@ so as to remain in compliance with the most up-to-date laws."
 			success = poll.sign_up(G)
 		if(success)
 			// Add a small overlay to indicate we've signed up
-			update_signed_up_alert()
+			update_signed_up_alert(usr)
 	else if(target)
 		switch(action)
 			if(NOTIFY_ATTACK)
@@ -631,8 +660,16 @@ so as to remain in compliance with the most up-to-date laws."
 			if(NOTIFY_JUMP)
 				var/turf/T = get_turf(target)
 				if(T && isturf(T))
+					if(!istype(G))
+						var/mob/dead/observer/actual_ghost = G.ghostize(TRUE)
+						actual_ghost.forceMove(T)
+						return
 					G.forceMove(T)
 			if(NOTIFY_FOLLOW)
+				if(!istype(G))
+					var/mob/dead/observer/actual_ghost = G.ghostize(TRUE)
+					actual_ghost.ManualFollow(target)
+					return
 				G.ManualFollow(target)
 
 /obj/screen/alert/notify_action/Topic(href, href_list)
@@ -645,14 +682,14 @@ so as to remain in compliance with the most up-to-date laws."
 		poll.remove_candidate(G)
 	else
 		poll.sign_up(G)
-	update_signed_up_alert()
+	update_signed_up_alert(G)
 
-/obj/screen/alert/notify_action/proc/update_signed_up_alert()
+/obj/screen/alert/notify_action/proc/update_signed_up_alert(mob/user)
 	if(!signed_up_overlay)
 		signed_up_overlay = image('icons/mob/screen_gen.dmi', icon_state = "selector")
 		signed_up_overlay.layer = FLOAT_LAYER
 		signed_up_overlay.plane = FLOAT_PLANE + 2
-	if(usr in poll.signed_up)
+	if(user in poll.signed_up)
 		overlays += signed_up_overlay
 	else
 		overlays -= signed_up_overlay
@@ -764,9 +801,6 @@ so as to remain in compliance with the most up-to-date laws."
 		alert.screen_loc = .
 		mymob.client.screen |= alert
 	return TRUE
-
-/mob
-	var/list/alerts // lazy list. contains /obj/screen/alert only // On /mob so clientless mobs will throw alerts properly
 
 /obj/screen/alert/Click(location, control, params)
 	if(!usr || !usr.client)

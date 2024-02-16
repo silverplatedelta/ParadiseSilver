@@ -6,12 +6,12 @@
 	icon = 'icons/obj/wizard.dmi'
 	icon_state = "construct"
 	desc = "The incomplete body of a golem. Add ten sheets of any mineral to finish."
-	var/shell_type = /obj/effect/mob_spawn/human/golem
+	var/shell_type = /obj/effect/mob_spawn/human/alive/golem
 	w_class = WEIGHT_CLASS_BULKY
 
 /obj/item/golem_shell/servant
 	name = "incomplete servant golem shell"
-	shell_type = /obj/effect/mob_spawn/human/golem/servant
+	shell_type = /obj/effect/mob_spawn/human/alive/golem/servant
 
 /obj/item/golem_shell/attackby(obj/item/I, mob/user, params)
 	..()
@@ -56,7 +56,7 @@
 		else
 			to_chat(user, "You can't build a golem out of this kind of material.")
 
-/obj/effect/mob_spawn/human/golem
+/obj/effect/mob_spawn/human/alive/golem
 	name = "inert free golem shell"
 	desc = "A humanoid shape, empty, lifeless, and full of potential."
 	mob_name = "a free golem"
@@ -69,6 +69,7 @@
 	move_resist = MOVE_FORCE_NORMAL
 	density = FALSE
 	death_cooldown = 300 SECONDS
+	STATIC_COOLDOWN_DECLARE(ghost_flash_cooldown)
 	var/has_owner = FALSE
 	var/can_transfer = TRUE //if golems can switch bodies to this new shell
 	var/mob/living/owner = null //golem's owner if it has one
@@ -78,14 +79,18 @@
 	travel the stars with a single declaration: \"Yeah go do whatever.\" Though you are bound to the one who created you, it is customary in your society to repeat those same words to newborn \
 	golems, so that no golem may ever be forced to serve again."
 
-/obj/effect/mob_spawn/human/golem/Initialize(mapload, datum/species/golem/species = null, mob/creator = null)
+/obj/effect/mob_spawn/human/alive/golem/Initialize(mapload, datum/species/golem/species = null, mob/creator = null)
 	if(species) //spawners list uses object name to register so this goes before ..()
 		name += " ([initial(species.prefix)])"
 		mob_species = species
 	. = ..()
 	var/area/A = get_area(src)
 	if(!mapload && A)
-		notify_ghosts("\A [initial(species.prefix)] golem shell has been completed in [A.name].", source = src)
+		if(COOLDOWN_FINISHED(src, ghost_flash_cooldown))
+			notify_ghosts("\A [initial(species.prefix)] golem shell has been completed in [A.name].", source = src)
+			COOLDOWN_START(src, ghost_flash_cooldown, 20 MINUTES)
+		else
+			notify_ghosts("\A [initial(species.prefix)] golem shell has been completed in [A.name].", source = src, flashwindow = FALSE)
 	if(has_owner && creator)
 		important_info = "Serve your creator, even if they are an antag."
 		flavour_text = "You are a golem created to serve your creator."
@@ -93,7 +98,7 @@
 		Serve [creator], and assist [creator.p_them()] in completing [creator.p_their()] goals at any cost."
 		owner = creator
 
-/obj/effect/mob_spawn/human/golem/special(mob/living/new_spawn, name)
+/obj/effect/mob_spawn/human/alive/golem/special(mob/living/new_spawn, name)
 	var/datum/species/golem/X = mob_species
 	to_chat(new_spawn, "[initial(X.info_text)]")
 	if(!owner)
@@ -139,7 +144,7 @@
 	else
 		new_spawn.mind.assigned_role = "Free Golem"
 
-/obj/effect/mob_spawn/human/golem/attack_hand(mob/user)
+/obj/effect/mob_spawn/human/alive/golem/attack_hand(mob/user)
 	. = ..()
 	if(.)
 		return
@@ -162,7 +167,7 @@
 		user.death()
 		return
 
-/obj/effect/mob_spawn/human/golem/attackby(obj/item/I, mob/living/carbon/user, params)
+/obj/effect/mob_spawn/human/alive/golem/attackby(obj/item/I, mob/living/carbon/user, params)
 	if(!istype(I, /obj/item/slimepotion/transference))
 		return ..()
 	if(iscarbon(user) && can_transfer)
@@ -171,7 +176,7 @@
 			return
 		if(QDELETED(src) || uses <= 0 || user.stat >= 1 || QDELETED(I))
 			return
-		if(istype(src, /obj/effect/mob_spawn/human/golem/servant) && !isgolem(user))
+		if(istype(src, /obj/effect/mob_spawn/human/alive/golem/servant) && !isgolem(user))
 			has_owner = FALSE
 		if(isgolem(user) && can_transfer)
 			var/datum/species/golem/g = user.dna.species
@@ -193,12 +198,12 @@
 		to_chat(g, "<span class='warning'>You have become the [g.dna.species]. Your allegiances, alliances, and roles are still the same as they were prior to using [I]!</span>")
 		qdel(I)
 
-/obj/effect/mob_spawn/human/golem/servant
+/obj/effect/mob_spawn/human/alive/golem/servant
 	has_owner = TRUE
 	name = "inert servant golem shell"
 	mob_name = "a servant golem"
 
-/obj/effect/mob_spawn/human/golem/adamantine
+/obj/effect/mob_spawn/human/alive/golem/adamantine
 	name = "dust-caked free golem shell"
 	desc = "A humanoid shape, empty, lifeless, and full of potential."
 	mob_name = "a free golem"

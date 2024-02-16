@@ -39,6 +39,8 @@
 	var/weight = 0
 	/// Message displayed when someone uses a baton when its forbidden by a martial art
 	var/no_baton_reason = "Your martial arts training prevents you from wielding batons."
+	/// Whether or not you can grab someone while horizontal with this Martial Art
+	var/can_horizontally_grab = TRUE
 
 /datum/martial_art/New()
 	. = ..()
@@ -59,7 +61,7 @@
 /datum/martial_art/proc/can_use(mob/living/carbon/human/H)
 	return !HAS_TRAIT(H, TRAIT_PACIFISM)
 
-/datum/martial_art/proc/act(step, mob/living/carbon/human/user, mob/living/carbon/human/target)
+/datum/martial_art/proc/act(step, mob/living/carbon/human/user, mob/living/carbon/human/target, could_start_new_combo = TRUE)
 	if(!can_use(user))
 		return MARTIAL_ARTS_CANNOT_USE
 	if(combo_timer)
@@ -72,7 +74,7 @@
 		var/mob/living/carbon/human/owner = locateUID(owner_UID)
 		if(istype(owner) && !QDELETED(owner))
 			owner.hud_used.combo_display.update_icon(ALL, streak)
-			return check_combos(step, user, target)
+			return check_combos(step, user, target, could_start_new_combo)
 	return FALSE
 
 /datum/martial_art/proc/reset_combos()
@@ -84,7 +86,7 @@
 	for(var/combo_type in combos)
 		current_combos.Add(new combo_type())
 
-/datum/martial_art/proc/check_combos(step, mob/living/carbon/human/user, mob/living/carbon/human/target)
+/datum/martial_art/proc/check_combos(step, mob/living/carbon/human/user, mob/living/carbon/human/target, could_start_new_combo = TRUE)
 	. = FALSE
 	for(var/thing in current_combos)
 		var/datum/martial_combo/MC = thing
@@ -95,21 +97,23 @@
 				if(MARTIAL_COMBO_FAIL)
 					current_combos -= MC
 				if(MARTIAL_COMBO_DONE_NO_CLEAR)
-					. = TRUE
+					. = MARTIAL_ARTS_ACT_SUCCESS
 					current_combos -= MC
 				if(MARTIAL_COMBO_DONE)
 					reset_combos()
-					return TRUE
+					return MARTIAL_ARTS_ACT_SUCCESS
 				if(MARTIAL_COMBO_DONE_BASIC_HIT)
 					basic_hit(user, target)
 					reset_combos()
-					return TRUE
+					return MARTIAL_ARTS_ACT_SUCCESS
 				if(MARTIAL_COMBO_DONE_CLEAR_COMBOS)
 					combos.Cut()
 					reset_combos()
-					return TRUE
+					return MARTIAL_ARTS_ACT_SUCCESS
 	if(!LAZYLEN(current_combos))
 		reset_combos()
+		if(HAS_COMBOS && could_start_new_combo)
+			act(step, user, target, could_start_new_combo = FALSE)
 
 /datum/martial_art/proc/basic_hit(mob/living/carbon/human/A, mob/living/carbon/human/D)
 
@@ -156,6 +160,7 @@
 			return
 	if(has_explaination_verb)
 		H.verbs |= /mob/living/carbon/human/proc/martial_arts_help
+	temporary = make_temporary
 	owner_UID = H.UID()
 	H.mind.known_martial_arts.Add(src)
 	H.mind.martial_art = get_highest_weight(H)
@@ -254,12 +259,16 @@
 //ITEMS
 
 /obj/item/clothing/gloves/boxing
-	var/datum/martial_art/boxing/style = new
+	var/datum/martial_art/boxing/style
+
+/obj/item/clothing/gloves/boxing/Initialize()
+	. = ..()
+	style = new()
 
 /obj/item/clothing/gloves/boxing/equipped(mob/user, slot)
 	if(!ishuman(user))
 		return
-	if(slot == slot_gloves)
+	if(slot == SLOT_HUD_GLOVES)
 		var/mob/living/carbon/human/H = user
 		style.teach(H, TRUE)
 	return
@@ -269,23 +278,27 @@
 	if(!ishuman(user))
 		return
 	var/mob/living/carbon/human/H = user
-	if(H.get_item_by_slot(slot_gloves) == src)
+	if(H.get_item_by_slot(SLOT_HUD_GLOVES) == src)
 		style.remove(H)
 
 /obj/item/storage/belt/champion/wrestling
 	name = "Wrestling Belt"
-	var/datum/martial_art/wrestling/style = new
+	var/datum/martial_art/wrestling/style
+
+/obj/item/storage/belt/champion/wrestling/Initialize()
+	. = ..()
+	style = new()
 
 /obj/item/storage/belt/champion/wrestling/equipped(mob/user, slot)
 	if(!ishuman(user))
 		return
-	if(slot == slot_belt)
+	if(slot == SLOT_HUD_BELT)
 		var/mob/living/carbon/human/H = user
 		if(HAS_TRAIT(user, TRAIT_PACIFISM))
 			to_chat(user, "<span class='warning'>In spite of the grandiosity of the belt, you don't feel like getting into any fights.</span>")
 			return
 		style.teach(H, TRUE)
-		to_chat(user, "<span class='sciradio'>You have an urge to flex your muscles and get into a fight. You have the knowledge of a thousand wrestlers before you. You can remember more by using the Recall teaching verb in the wrestling tab.</span>")
+		to_chat(user, "<span class='sciradio'>You have an urge to flex your muscles and get into a fight. You have the knowledge of a thousand wrestlers before you. You can remember more by using the verb in the martial arts tab.</span>")
 	return
 
 /obj/item/storage/belt/champion/wrestling/dropped(mob/user)
@@ -293,7 +306,7 @@
 	if(!ishuman(user))
 		return
 	var/mob/living/carbon/human/H = user
-	if(H.get_item_by_slot(slot_belt) == src)
+	if(H.get_item_by_slot(SLOT_HUD_BELT) == src)
 		style.remove(H)
 		to_chat(user, "<span class='sciradio'>You no longer have an urge to flex your muscles.</span>")
 
@@ -312,7 +325,7 @@
 		var/mob/living/carbon/human/H = user
 		var/datum/martial_art/plasma_fist/F = new/datum/martial_art/plasma_fist(null)
 		F.teach(H)
-		to_chat(H, "<span class='boldannounce'>You have learned the ancient martial art of Plasma Fist.</span>")
+		to_chat(H, "<span class='boldannounceic'>You have learned the ancient martial art of Plasma Fist.</span>")
 		used = TRUE
 		desc = "It's completely blank."
 		name = "empty scroll"
@@ -362,7 +375,7 @@
 			to_chat(user, "<span class='warning'>The mere thought of combat, let alone CQC, makes your head spin!</span>")
 			return
 
-	to_chat(user, "<span class='boldannounce'>You remember the basics of CQC.</span>")
+	to_chat(user, "<span class='boldannounceic'>You remember the basics of CQC.</span>")
 	var/datum/martial_art/cqc/CQC = new(null)
 	CQC.teach(user)
 	user.drop_item()
@@ -373,14 +386,16 @@
 /obj/item/bostaff
 	name = "bo staff"
 	desc = "A long, tall staff made of polished wood. Traditionally used in ancient old-Earth martial arts. Can be wielded to both kill and incapacitate."
+	icon_state = "bostaff0"
+	base_icon_state = "bostaff"
+	lefthand_file = 'icons/mob/inhands/staves_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/staves_righthand.dmi'
 	force = 10
 	w_class = WEIGHT_CLASS_BULKY
-	slot_flags = SLOT_BACK
+	slot_flags = SLOT_FLAG_BACK
 	throwforce = 20
 	throw_speed = 2
 	attack_verb = list("smashed", "slammed", "whacked", "thwacked")
-	icon_state = "bostaff0"
-	base_icon_state = "bostaff"
 
 /obj/item/bostaff/Initialize(mapload)
 	. = ..()
@@ -429,7 +444,7 @@
 			H.visible_message("<span class='warning'>[pick(fluffmessages)]</span>", \
 								"<span class='userdanger'>[pick(fluffmessages)]</span>")
 			playsound(get_turf(user), 'sound/effects/woodhit.ogg', 75, 1, -1)
-			H.adjustStaminaLoss(rand(13,20))
+			H.apply_damage(rand(13,20), STAMINA)
 			if(prob(10))
 				H.visible_message("<span class='warning'>[H] collapses!</span>", \
 									"<span class='userdanger'>Your legs give out!</span>")

@@ -4,9 +4,6 @@
 		eyes.update_colour()
 		update_body()
 
-/mob/living/carbon/human/var/list/bodyparts = list()
-/mob/living/carbon/human/var/list/bodyparts_by_name = list() // map organ names to organs
-
 // Takes care of organ related updates, such as broken and missing limbs
 /mob/living/carbon/human/handle_organs()
 	..()
@@ -23,10 +20,10 @@
 		//Moving around with fractured ribs won't do you any good
 			if(E.is_broken() && E.internal_organs && E.internal_organs.len && prob(15))
 				var/obj/item/organ/internal/I = pick(E.internal_organs)
-				custom_pain("You feel broken bones moving in your [E.name]!")
-				I.receive_damage(rand(3,5))
+				E.custom_pain("You feel broken bones moving in your [E.name]!")
+				I.receive_damage(rand(3, 5))
 			if((E.status & ORGAN_BURNT) && !(E.status & ORGAN_SALVED))
-				custom_pain("You feel the skin sloughing off the burn on your [E.name]!")
+				E.custom_pain("You feel the skin sloughing off the burn on your [E.name]!")
 				E.germ_level++
 
 
@@ -59,13 +56,13 @@
 		else if(E.is_broken() || !E.is_usable())
 			stance_damage += 1
 
-	// Canes and crutches help you stand (if the latter is ever added)
+	// Canes and crutches help you stand
 	// One cane mitigates a broken leg+foot, or a missing foot.
-	// Two canes are needed for a lost leg. If you are missing both legs, canes aren't gonna help you.
-	if(l_hand && l_hand.is_crutch())
-		stance_damage -= 2
-	if(r_hand && r_hand.is_crutch())
-		stance_damage -= 2
+	// Two canes are needed for a lost leg. If you are missing both legs, canes aren't gonna help you. Get some crutches instead.
+	if(l_hand)
+		stance_damage -= l_hand.get_crutch_efficiency()
+	if(r_hand)
+		stance_damage -= r_hand.get_crutch_efficiency()
 
 	if(stance_damage < 0)
 		stance_damage = 0
@@ -161,17 +158,6 @@ old_ue: Set this to a UE string, and this proc will overwrite the dna of organs 
 	for(var/obj/item/organ/O in all_bits)
 		if(assimilate || O.dna.unique_enzymes == ue_to_compare)
 			O.set_dna(dna)
-
-/*
-Given the name of an organ, returns the external organ it's contained in
-I use this to standardize shadowling dethrall code
--- Crazylemon
-*/
-/mob/living/carbon/human/proc/named_organ_parent(organ_name)
-	if(!get_int_organ_tag(organ_name))
-		return null
-	var/obj/item/organ/internal/O = get_int_organ_tag(organ_name)
-	return O.parent_organ
 
 /mob/living/carbon/human/has_organic_damage()
 	var/robo_damage = 0

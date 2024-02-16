@@ -24,7 +24,7 @@
 	var/highscore = 0
 	for(var/obj/machinery/power/bluespace_tap/T in GLOB.machines)
 		highscore = max(highscore, T.total_points)
-	to_chat(world, "<b>Bluespace Harvester Highscore</b>: [highscore >= goal ? "<span class='greenannounce'>": "<span class='boldannounce'>"][highscore]</span>")
+	to_chat(world, "<b>Bluespace Harvester Highscore</b>: [highscore >= goal ? "<span class='greenannounce'>": "<span class='boldannounceic'>"][highscore]</span>")
 	if(highscore >= goal)
 		return TRUE
 	return FALSE
@@ -149,25 +149,25 @@
 	name = "fancy food"
 	lootcount = 3
 	loot = list(
-		/obj/item/reagent_containers/food/snacks/wingfangchu,
-		/obj/item/reagent_containers/food/snacks/hotdog,
-		/obj/item/reagent_containers/food/snacks/sliceable/turkey,
-		/obj/item/reagent_containers/food/snacks/plumphelmetbiscuit,
-		/obj/item/reagent_containers/food/snacks/appletart,
-		/obj/item/reagent_containers/food/snacks/sliceable/cheesecake,
-		/obj/item/reagent_containers/food/snacks/sliceable/bananacake,
-		/obj/item/reagent_containers/food/snacks/sliceable/chocolatecake,
-		/obj/item/reagent_containers/food/snacks/soup/meatballsoup,
-		/obj/item/reagent_containers/food/snacks/soup/mysterysoup,
-		/obj/item/reagent_containers/food/snacks/soup/stew,
-		/obj/item/reagent_containers/food/snacks/soup/hotchili,
-		/obj/item/reagent_containers/food/snacks/burrito,
-		/obj/item/reagent_containers/food/snacks/fishburger,
-		/obj/item/reagent_containers/food/snacks/cubancarp,
-		/obj/item/reagent_containers/food/snacks/fishandchips,
-		/obj/item/reagent_containers/food/snacks/meatpie,
+		/obj/item/food/snacks/wingfangchu,
+		/obj/item/food/snacks/hotdog,
+		/obj/item/food/snacks/sliceable/turkey,
+		/obj/item/food/snacks/plumphelmetbiscuit,
+		/obj/item/food/snacks/appletart,
+		/obj/item/food/snacks/sliceable/cheesecake,
+		/obj/item/food/snacks/sliceable/bananacake,
+		/obj/item/food/snacks/sliceable/chocolatecake,
+		/obj/item/food/snacks/soup/meatballsoup,
+		/obj/item/food/snacks/soup/mysterysoup,
+		/obj/item/food/snacks/soup/stew,
+		/obj/item/food/snacks/soup/hotchili,
+		/obj/item/food/snacks/burrito,
+		/obj/item/food/snacks/fishburger,
+		/obj/item/food/snacks/cubancarp,
+		/obj/item/food/snacks/fishandchips,
+		/obj/item/food/snacks/meatpie,
 		/obj/item/pizzabox/hawaiian, //it ONLY gives hawaiian. MUHAHAHA
-		/obj/item/reagent_containers/food/snacks/sliceable/xenomeatbread //maybe add some dangerous/special food here, ie robobuger?
+		/obj/item/food/snacks/sliceable/xenomeatbread //maybe add some dangerous/special food here, ie robobuger?
 	)
 
 #define kW *1000
@@ -199,10 +199,11 @@
 	luminosity = 1
 
 	/// Correspond to power required for a mining level, first entry for level 1, etc.
-	var/list/power_needs = list(1 kW, 5 kW, 50 kW, 100 kW, 500 kW,
-								1 MW, 2 MW, 5 MW, 10 MW, 25 MW,
-								50 MW, 75 MW, 125 MW, 200 MW, 500 MW,
-								1 GW, 5 GW, 15 GW, 45 GW, 500 GW)
+	var/list/power_needs = list(1 kW, 2 kW, 5 kW, 10 kW, 15 kW,
+								25 kW, 50 kW, 100 kW, 250 kW, 500 kW,
+								1 MW, 2 MW, 5 MW, 10 MW, 15 MW,
+								20 MW, 25 MW, 30 MW, 40 MW, 50 MW,
+								60 MW, 70 MW, 80 MW, 90 MW, 100 MW)
 
 	/// list of possible products
 	var/static/product_list = list(
@@ -227,11 +228,11 @@
 	// Tweak these and active_power_consumption to balance power generation
 
 	/// Max power input level, I don't expect this to be ever reached
-	var/max_level = 20
+	var/max_level = 25
 	/// Amount of points to give per mining level
 	var/base_points = 4
 	/// How high the machine can be run before it starts having a chance for dimension breaches.
-	var/safe_levels = 10
+	var/safe_levels = 15
 	/// When event triggers this will hold references to all portals so we can fix the sprite after they're broken
 	var/list/active_nether_portals = list()
 
@@ -259,7 +260,7 @@
 	. = ..()
 
 	if(length(active_nether_portals))
-		icon_state = "redspace_tap"
+		icon_state = "cascade_tap"
 		return
 
 	if(get_available_power() <= 0)
@@ -274,7 +275,7 @@
 	underlays.Cut()
 
 	if(length(active_nether_portals))
-		. += "redspace"
+		. += "cascade"
 		set_light(15, 5, "#ff0000")
 		return
 
@@ -293,15 +294,15 @@
 	switch(input_level)
 		if(0)
 			return 0
-		if(1 to 2)
+		if(1 to 3)
 			return 1
-		if(3 to 5)
+		if(4 to 8)
 			return 2
-		if(6 to 7)
+		if(9 to 11)
 			return 3
-		if(8 to 10)
+		if(12 to 15)
 			return 4
-		if(11 to INFINITY)
+		if(16 to INFINITY)
 			return 5
 
 /obj/machinery/power/bluespace_tap/power_change()
@@ -315,12 +316,14 @@
 
 
 /obj/machinery/power/bluespace_tap/connect_to_network()
-	..()
-	update_icon()
+	. = ..()
+	if(.)
+		update_icon()
 
 /obj/machinery/power/bluespace_tap/disconnect_from_network()
-	..()
-	update_icon()
+	. = ..()
+	if(.)
+		update_icon()
 
 /obj/machinery/power/bluespace_tap/Destroy()
 	QDEL_LIST_CONTENTS(fillers)
@@ -402,7 +405,7 @@
 		if(!emagged)
 			input_level = 0	//emergency shutdown unless we're sabotaged
 			desired_level = 0
-		start_nether_portaling(rand(1,3))
+		start_nether_portaling(rand(1, 3))
 
 /obj/machinery/power/bluespace_tap/proc/start_nether_portaling(amount)
 	var/turf/location = locate(x + rand(-5, 5), y + rand(-5, 5), z)
@@ -412,7 +415,7 @@
 	P.linked_source_object = src
 	update_icon()
 	if(amount)
-		addtimer(CALLBACK(src, PROC_REF(start_nether_portaling), amount), rand(3,5) SECONDS)
+		addtimer(CALLBACK(src, PROC_REF(start_nether_portaling), amount), rand(3, 5) SECONDS)
 
 /obj/machinery/power/bluespace_tap/ui_data(mob/user)
 	var/list/data = list()
@@ -491,10 +494,13 @@
 			var/key = text2num(params["target"])
 			produce(key)
 
-/obj/machinery/power/bluespace_tap/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = TRUE, datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/obj/machinery/power/bluespace_tap/ui_state(mob/user)
+	return GLOB.default_state
+
+/obj/machinery/power/bluespace_tap/ui_interact(mob/user, datum/tgui/ui = null)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, ui_key, "BluespaceTap", name, 650, 400, master_ui, state)
+		ui = new(user, src, "BluespaceTap", name)
 		ui.open()
 
 //emaging provides slightly more points but at much greater risk
@@ -505,6 +511,7 @@
 	do_sparks(5, FALSE, src)
 	if(user)
 		user.visible_message("<span class='warning'>[user] overrides the safety protocols of [src].</span>", "<span class='warning'>You override the safety protocols.</span>")
+	return TRUE
 
 /obj/structure/spawner/nether/bluespace_tap
 	spawn_time = 30 SECONDS

@@ -3,6 +3,8 @@
  */
 /obj/item/fireaxe  // DEM AXES MAN, marker -Agouri
 	base_icon_state = "fireaxe"
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "fireaxe0"
 	name = "fire axe"
 	desc = "Truly, the weapon of a madman. Who would think to fight fire with an axe?"
@@ -10,7 +12,7 @@
 	throwforce = 15
 	sharp = TRUE
 	w_class = WEIGHT_CLASS_BULKY
-	slot_flags = SLOT_BACK
+	slot_flags = SLOT_FLAG_BACK
 	toolspeed = 0.25
 	attack_verb = list("attacked", "chopped", "cleaved", "torn", "cut")
 	hitsound = 'sound/weapons/bladeslice.ogg'
@@ -94,6 +96,9 @@
 /obj/item/dualsaber
 	name = "double-bladed energy sword"
 	desc = "Handle with care."
+	icon = 'icons/obj/energy_melee.dmi'
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "dualsaber0"
 	force = 3
 	throwforce = 5
@@ -103,6 +108,7 @@
 	var/w_class_on = WEIGHT_CLASS_BULKY
 
 	armour_penetration_flat = 10
+	armour_penetration_percentage = 50
 	origin_tech = "magnets=4;syndicate=5"
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 	max_integrity = 200
@@ -225,12 +231,16 @@
 
 //spears
 /obj/item/spear
-	icon_state = "spearglass0"
 	name = "spear"
 	desc = "A haphazardly-constructed yet still deadly weapon of ancient design."
+	icon = 'icons/obj/spear.dmi'
+	base_icon_state = "spearglass"
+	icon_state = "spearglass0"
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	force = 10
 	w_class = WEIGHT_CLASS_BULKY
-	slot_flags = SLOT_BACK
+	slot_flags = SLOT_FLAG_BACK
 	var/force_unwielded = 10
 	var/force_wielded = 18
 	throwforce = 20
@@ -245,7 +255,6 @@
 	max_integrity = 200
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, RAD = 0, FIRE = 50, ACID = 30)
 	needs_permit = TRUE
-	base_icon_state = "spearglass"
 
 /obj/item/spear/Initialize(mapload)
 	. = ..()
@@ -392,6 +401,8 @@
 /obj/item/chainsaw
 	name = "chainsaw"
 	desc = "A versatile power tool. Useful for limbing trees and delimbing humans."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "gchainsaw_off"
 	flags = CONDUCT
 	force = 13
@@ -462,6 +473,8 @@
 /obj/item/butcher_chainsaw
 	name = "chainsaw"
 	desc = "Perfect for felling trees or fellow spacemen."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	base_icon_state = "chainsaw"
 	icon_state = "chainsaw0"
 	force = 15
@@ -527,10 +540,12 @@
 /obj/item/singularityhammer
 	name = "singularity hammer"
 	desc = "The pinnacle of close combat technology, the hammer harnesses the power of a miniaturized singularity to deal crushing blows."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "singulohammer0"
 	base_icon_state = "singulohammer"
 	flags = CONDUCT
-	slot_flags = SLOT_BACK
+	slot_flags = SLOT_FLAG_BACK
 	force = 5
 	throwforce = 15
 	throw_range = 1
@@ -560,7 +575,7 @@
 	icon_state = "singulohammer0"
 
 /obj/item/singularityhammer/proc/vortex(turf/pull, mob/wielder)
-	for(var/atom/movable/X in orange(5, pull))
+	for(var/atom/movable/X in range(5, pull))
 		if(X.move_resist == INFINITY)
 			continue
 		if(X == wielder)
@@ -596,10 +611,12 @@
 /obj/item/mjollnir
 	name = "Mjolnir"
 	desc = "A weapon worthy of a god, able to strike with the force of a lightning bolt. It crackles with barely contained energy."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "mjollnir0"
 	base_icon_state = "mjollnir"
 	flags = CONDUCT
-	slot_flags = SLOT_BACK
+	slot_flags = SLOT_FLAG_BACK
 	force = 5
 	throwforce = 30
 	throw_range = 7
@@ -641,10 +658,12 @@
 /obj/item/knighthammer
 	name = "singuloth knight's hammer"
 	desc = "A hammer made of sturdy metal with a golden skull adorned with wings on either side of the head. <br>This weapon causes devastating damage to those it hits due to a power field sustained by a mini-singularity inside of the hammer."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "knighthammer0"
 	base_icon_state = "knighthammer"
 	flags = CONDUCT
-	slot_flags = SLOT_BACK
+	slot_flags = SLOT_FLAG_BACK
 	force = 5
 	throwforce = 15
 	throw_range = 1
@@ -707,6 +726,8 @@
 /obj/item/pyro_claws
 	name = "hardplasma energy claws"
 	desc = "The power of the sun, in the claws of your hand."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
 	icon_state = "pyro_claws"
 	flags = ABSTRACT | NODROP | DROPDEL
 	force = 22
@@ -719,6 +740,7 @@
 	sprite_sheets_inhand = list("Vox" = 'icons/mob/clothing/species/vox/held.dmi', "Drask" = 'icons/mob/clothing/species/drask/held.dmi')
 	toolspeed = 0.5
 	var/lifetime = 60 SECONDS
+	var/next_spark_time
 
 /obj/item/pyro_claws/Initialize(mapload)
 	. = ..()
@@ -729,6 +751,9 @@
 /obj/item/pyro_claws/Destroy()
 	STOP_PROCESSING(SSobj, src)
 	return ..()
+
+/obj/item/pyro_claws/customised_abstract_text(mob/living/carbon/owner)
+	return "<span class='warning'>[owner.p_they(TRUE)] [owner.p_have(FALSE)] energy claws extending [owner.p_their(FALSE)] wrists.</span>"
 
 /obj/item/pyro_claws/process()
 	lifetime -= 2 SECONDS
@@ -743,8 +768,9 @@
 /obj/item/pyro_claws/afterattack(atom/target, mob/user, proximity)
 	if(!proximity)
 		return
-	if(prob(60))
+	if(prob(60) && world.time > next_spark_time)
 		do_sparks(rand(1,6), 1, loc)
+		next_spark_time = world.time + 0.8 SECONDS
 	if(istype(target, /obj/machinery/door/airlock))
 		var/obj/machinery/door/airlock/A = target
 
@@ -774,6 +800,7 @@
 	actions_types = list(/datum/action/item_action/toggle)
 	var/on_cooldown = FALSE
 	var/obj/item/assembly/signaler/anomaly/pyro/core
+	var/next_spark_time
 
 /obj/item/clothing/gloves/color/black/pyro_claws/Destroy()
 	QDEL_NULL(core)
@@ -787,7 +814,7 @@
 		. += "<span class='warning'>It is missing a pyroclastic anomaly core.</span>"
 
 /obj/item/clothing/gloves/color/black/pyro_claws/item_action_slot_check(slot)
-	if(slot == slot_gloves)
+	if(slot == SLOT_HUD_GLOVES)
 		return TRUE
 
 /obj/item/clothing/gloves/color/black/pyro_claws/ui_action_click(mob/user)
@@ -796,7 +823,6 @@
 		return
 	if(on_cooldown)
 		to_chat(user, "<span class='notice'>[src] is on cooldown!</span>")
-		do_sparks(rand(1,6), 1, loc)
 		return
 	if(!user.drop_l_hand() || !user.drop_r_hand())
 		to_chat(user, "<span class='notice'>[src] are unable to deploy the blades with the items in your hands!</span>")
@@ -807,7 +833,9 @@
 	on_cooldown = TRUE
 	flags |= NODROP
 	addtimer(CALLBACK(src, PROC_REF(reboot)), 2 MINUTES)
-	do_sparks(rand(1,6), 1, loc)
+	if(world.time > next_spark_time)
+		do_sparks(rand(1,6), 1, loc)
+		next_spark_time = world.time + 0.8 SECONDS
 
 /obj/item/clothing/gloves/color/black/pyro_claws/attackby(obj/item/I, mob/user, params)
 	if(istype(I, /obj/item/assembly/signaler/anomaly/pyro))
@@ -883,16 +911,21 @@
 	var/obj/vehicle/janicart/jani_vehicle = locate(/obj/vehicle/janicart) in new_item_loc.contents
 	var/trash_amount = 1
 	for(var/obj/item/garbage in current_item_loc.contents)
-		if(!garbage.anchored)
-			if(jani_vehicle?.mybag && garbage.w_class <= WEIGHT_CLASS_SMALL)
-				move_into_storage(user, jani_vehicle.mybag, garbage)
-			else if(jani_cart?.mybag && garbage.w_class <= WEIGHT_CLASS_SMALL)
-				move_into_storage(user, jani_cart.mybag, garbage)
-			else if(target_bin)
-				move_into_storage(user, target_bin, garbage)
-			else
-				garbage.Move(new_item_loc, user.dir)
-			trash_amount++
+		if(garbage.anchored)
+			continue
+		var/obj/item/storage/bag/trash/bag = jani_vehicle?.mybag || jani_cart?.mybag
+		var/obj/trashed_into
+		if(bag?.can_be_inserted(garbage, TRUE))
+			bag.handle_item_insertion(garbage, TRUE)
+			trashed_into = bag
+		else if(target_bin)
+			move_into_storage(user, target_bin, garbage)
+			trashed_into = target_bin
+		else
+			garbage.Move(new_item_loc, user.dir)
+		if(trashed_into)
+			to_chat(user, "<span class='notice'>You sweep the pile of garbage into [trashed_into].</span>")
+		trash_amount++
 		if(trash_amount > BROOM_PUSH_LIMIT)
 			break
 	if(trash_amount > 1)
@@ -901,7 +934,6 @@
 /obj/item/push_broom/proc/move_into_storage(mob/user, obj/storage, obj/trash)
 	trash.forceMove(storage)
 	storage.update_icon()
-	to_chat(user, "<span class='notice'>You sweep the pile of garbage into [storage].</span>")
 
 /obj/item/push_broom/proc/janicart_insert(mob/user, obj/structure/janitorialcart/cart)
 	cart.mybroom = src
@@ -976,7 +1008,7 @@
 			user.do_attack_animation(H, ATTACK_EFFECT_DISARM)
 			playsound(get_turf(user), 'sound/effects/woodhit.ogg', 50, TRUE, -1)
 			H.AdjustConfused(4 SECONDS, 0, 4 SECONDS) //no stacking infinitely
-			H.adjustStaminaLoss(15)
+			H.apply_damage(15, STAMINA)
 
 			add_attack_logs(user, H, "Swept with the brush of the titanium push broom", ATKLOG_ALL)
 
@@ -984,3 +1016,101 @@
 			return ..()
 
 #undef BROOM_PUSH_LIMIT
+
+/obj/item/supermatter_halberd  //Supermatter Halberd, used by Oblivion Enforcers
+	name = "supermatter halberd"
+	desc = "The revered weapon of Oblivion Enforcers, used to enforce the Order's will."
+	lefthand_file = 'icons/mob/inhands/weapons_lefthand.dmi'
+	righthand_file = 'icons/mob/inhands/weapons_righthand.dmi'
+	icon_state = "smhalberd0"
+	base_icon_state = "smhalberd"
+	force = 5
+	sharp = TRUE
+	damtype = BURN
+	w_class = WEIGHT_CLASS_BULKY
+	slot_flags = SLOT_FLAG_BACK
+	throwforce = 15
+	toolspeed = 0.25
+	attack_verb = list("enlightened", "enforced", "cleaved", "stabbed", "whacked")
+	hitsound = 'sound/weapons/bladeslice.ogg'
+	resistance_flags = FIRE_PROOF
+	var/static/list/obliteration_targets = list(/turf/simulated/wall, /obj/machinery/door/airlock)
+	/// Whether we'll knockdown on hit
+	var/charged = TRUE
+
+/obj/item/supermatter_halberd/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_FORCES_OPEN_DOORS_ITEM, ROUNDSTART_TRAIT)
+	ADD_TRAIT(src, TRAIT_SUPERMATTER_IMMUNE, ROUNDSTART_TRAIT) //so it can't be dusted by the SM
+	AddComponent(/datum/component/parry, _stamina_constant = 0, _stamina_coefficient = 0.25, _parryable_attack_types = ALL_ATTACK_TYPES)
+	AddComponent(/datum/component/two_handed, force_wielded = 40, force_unwielded = force, icon_wielded = "[base_icon_state]1")
+
+/obj/item/supermatter_halberd/update_icon_state()
+	icon_state = "[base_icon_state]0"
+	return ..()
+
+/obj/item/supermatter_halberd/afterattack(atom/A, mob/user, proximity)
+	if(!proximity)
+		return
+
+	if(!HAS_TRAIT(src, TRAIT_WIELDED))
+		return
+
+	if(istype(A, /obj/structure/window) || istype(A, /obj/structure/grille)) //same behavior as a fireaxe for windows
+		var/obj/structure/W = A
+		W.obj_destruction("fireaxe")
+
+	//dusting dead people + knocking down people
+	if(isliving(A))
+		var/mob/living/target = A
+		if(target.stat == DEAD)
+			visible_message("<span class='danger'>[user] raises [src] high, ready to bring it down on [target]!</span>")
+			if(do_after(user, 1 SECONDS, TRUE, target))
+				visible_message("<span class='danger'>[user] brings down [src], obliterating [target] with a heavy blow!</span>")
+				playsound(loc, 'sound/effects/supermatter.ogg', 50, TRUE)
+				target.dust()
+				return
+			to_chat(user, "<span class='notice'>You lower [src]. There'll be time to obliterate them later...</span>")
+			return
+
+		if(charged)
+			playsound(loc, 'sound/magic/lightningbolt.ogg', 5, TRUE)
+			target.visible_message("<span class='danger'>[src] flares with energy and shocks [target]!</span>", \
+									"<span class='userdanger'>You're shocked by [src]!</span>", \
+									"<span class='warning'>You hear shocking.</span>")
+			target.KnockDown(4 SECONDS)
+			do_sparks(3, FALSE, src)
+			charged = FALSE
+			addtimer(CALLBACK(src, PROC_REF(recharge)), 4 SECONDS)
+
+	//walls and airlock obliteration logic
+	if(!is_type_in_list(A, obliteration_targets))
+		return
+
+	if(istype(A, /turf/simulated/wall/indestructible))
+		return
+
+	to_chat(user, "<span class='notice'>You start to obliterate [A].</span>")
+	playsound(loc, hitsound, 50, TRUE)
+
+	var/obj/effect/temp_visual/obliteration_rays/rays = new(get_turf(A))
+
+	if(do_after(user, 5 SECONDS * toolspeed, target = A))
+		new /obj/effect/temp_visual/obliteration(A, A)
+		playsound(loc, 'sound/effects/supermatter.ogg', 25, TRUE)
+
+		if(iswallturf(A))
+			var/turf/AT = A
+			AT.ChangeTurf(/turf/simulated/floor/plating)
+			return
+
+		if(istype(A, /obj/machinery/door/airlock))
+			qdel(A)
+			return
+
+		qdel(rays)
+		return
+
+/obj/item/supermatter_halberd/proc/recharge()
+	charged = TRUE
+	playsound(loc, 'sound/machines/sm/accent/normal/1.ogg', 25, TRUE)

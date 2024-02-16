@@ -163,6 +163,7 @@
 	density = FALSE // prevents it blocking all movement
 	max_integrity = 20 // two welders, or one laser shot (15 for the normal spider webs)
 	icon_state = "stickyweb1"
+	creates_cover = TRUE
 	var/creator_ckey = null
 
 /obj/structure/spider/terrorweb/Initialize(mapload)
@@ -240,8 +241,8 @@
 			if(Adjacent(O) && !O.anchored)
 				if(!istype(O, /obj/structure/spider))
 					choices += O
-		if(choices.len)
-			cocoon_target = input(src,"What do you wish to cocoon?") in null|choices
+		if(length(choices))
+			cocoon_target = tgui_input_list(src, "What do you wish to cocoon?", "Cocoon Selection", choices)
 		else
 			to_chat(src, "<span class='danger'>There is nothing nearby you can wrap.</span>")
 

@@ -68,7 +68,7 @@ export const AppearanceChanger = (props, context) => {
   }
 
   return (
-    <Window>
+    <Window width={800} height={450}>
       <Window.Content scrollable>
         <LabeledList>
           {!!change_race && (
@@ -301,7 +301,11 @@ const ColorContent = (props, context) => {
       {colorOptions.map(
         (c) =>
           !!data[c.key] && (
-            <Button content={c.text} onClick={() => act(c.action)} />
+            <Button
+              key={c.key}
+              content={c.text}
+              onClick={() => act(c.action)}
+            />
           )
       )}
     </LabeledList.Item>

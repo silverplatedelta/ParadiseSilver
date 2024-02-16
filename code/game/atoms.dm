@@ -36,9 +36,8 @@
 
 	//Detective Work, used for the duplicate data points kept in the scanners
 	var/list/original_atom
-
-	//Detective Work, used for allowing a given atom to leave its fibers on stuff. Allowed by default
-	var/can_leave_fibers = TRUE
+	/// Materials scannable by detective
+	var/list/suit_fibers
 
 	var/admin_spawned = FALSE	//was this spawned by an admin? used for stat tracking stuff.
 
@@ -390,6 +389,12 @@
 
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, .)
 
+/atom/proc/examine_more(mob/user) ///Extended description of an object. Allows you to double examine objects and have them give you a second description of an item. Useful for writing flavourful stuff.
+	SHOULD_CALL_PARENT(TRUE)
+	RETURN_TYPE(/list)
+
+	return list()
+
 /**
  * Updates the appearence of the icon
  *
@@ -512,8 +517,10 @@
 /atom/proc/welder_act(mob/living/user, obj/item/I)
 	return
 
+/// This is when an atom is emagged. Should return false if it fails, or it has no emag_act defined.
 /atom/proc/emag_act(mob/user)
 	SEND_SIGNAL(src, COMSIG_ATOM_EMAG_ACT, user)
+	return FALSE
 
 /atom/proc/unemag()
 	return
@@ -547,7 +554,7 @@
 		addtimer(CALLBACK(src, PROC_REF(hitby_react), AM), 2)
 
 /// This proc applies special effects of a carbon mob hitting something, be it a wall, structure, or window. You can set mob_hurt to false to avoid double dipping through subtypes if returning ..()
-/atom/proc/hit_by_thrown_carbon(mob/living/carbon/human/C, datum/thrownthing/throwingdatum, damage, mob_hurt = FALSE, self_hurt = FALSE)
+/atom/proc/hit_by_thrown_mob(mob/living/C, datum/thrownthing/throwingdatum, damage, mob_hurt = FALSE, self_hurt = FALSE)
 	return
 
 /atom/proc/hitby_react(atom/movable/AM)
@@ -654,7 +661,7 @@
 				//Add the list if it does not exist.
 				if(!fingerprintshidden)
 					fingerprintshidden = list()
-				fingerprintshidden += text("\[[all_timestamps()]\] (Wearing gloves). Real name: [], Key: []", H.real_name, H.key)
+				fingerprintshidden += "\[[all_timestamps()]\] (Wearing gloves). Real name: [H.real_name], Key: [H.key]"
 				fingerprintslast = H.ckey
 			return FALSE
 		if(!fingerprints)
@@ -662,7 +669,7 @@
 				//Add the list if it does not exist.
 				if(!fingerprintshidden)
 					fingerprintshidden = list()
-				fingerprintshidden += text("\[[all_timestamps()]\] Real name: [], Key: []", H.real_name, H.key)
+				fingerprintshidden += "\[[all_timestamps()]\] Real name: [H.real_name], Key: [H.key]"
 				fingerprintslast = H.ckey
 			return TRUE
 	else
@@ -670,7 +677,7 @@
 			//Add the list if it does not exist.
 			if(!fingerprintshidden)
 				fingerprintshidden = list()
-			fingerprintshidden += text("\[[all_timestamps()]\] Real name: [], Key: []", M.real_name, M.key)
+			fingerprintshidden += "\[[all_timestamps()]\] Real name: [M.real_name], Key: [M.key]"
 			fingerprintslast = M.ckey
 	return
 
@@ -713,14 +720,14 @@
 		if(!ignoregloves)
 			if(H.gloves && H.gloves != src)
 				if(fingerprintslast != H.ckey)
-					fingerprintshidden += text("\[[all_timestamps()]\] (Wearing gloves). Real name: [], Key: []", H.real_name, H.key)
+					fingerprintshidden += "\[[all_timestamps()]\] (Wearing gloves). Real name: [H.real_name], Key: [H.key]"
 					fingerprintslast = H.ckey
 				H.gloves.add_fingerprint(M)
 				return FALSE
 
 		//More adminstuffz
 		if(fingerprintslast != H.ckey)
-			fingerprintshidden += text("\[[all_timestamps()]\] Real name: [], Key: []", H.real_name, H.key)
+			fingerprintshidden += "\[[all_timestamps()]\] Real name: [H.real_name], Key: [H.key]"
 			fingerprintslast = H.ckey
 
 		//Make the list if it does not exist.
@@ -737,7 +744,7 @@
 	else
 		//Smudge up dem prints some
 		if(fingerprintslast != M.ckey)
-			fingerprintshidden += text("\[[all_timestamps()]\] Real name: [], Key: []", M.real_name, M.key)
+			fingerprintshidden += "\[[all_timestamps()]\] Real name: [M.real_name], Key: [M.key]"
 			fingerprintslast = M.ckey
 
 	return
@@ -1252,21 +1259,6 @@ GLOBAL_LIST_EMPTY(blood_splatter_icons)
 	if(degrees)
 		appearance_flags |= PIXEL_SCALE
 	transform = M
-
-//Update the screentip to reflect what we're hovering over
-/atom/MouseEntered(location, control, params)
-	if(!usr || !usr.client)
-		return
-	var/datum/hud/active_hud = usr.hud_used
-	if(!active_hud)
-		return
-	var/screentip_mode = usr.client.prefs.screentip_mode
-	if(screentip_mode == 0 || (flags & NO_SCREENTIPS))
-		active_hud.screentip_text.maptext = ""
-		return
-	//We inline a MAPTEXT() here, because there's no good way to statically add to a string like this
-	var/screentip_color = usr.client.prefs.screentip_color
-	active_hud.screentip_text.maptext = "<span class='maptext' style='font-family: sans-serif; text-align: center; font-size: [screentip_mode]px; color: [screentip_color]'>[name]</span>"
 
 /*
 	Setter for the `density` variable.

@@ -252,7 +252,7 @@
 	var/datum/component/material_container/materials = GetComponent(/datum/component/material_container)
 
 	// General info
-	data["id"] = inserted_id ? list("name" = "[inserted_id.registered_name] ([inserted_id.assignment])", "points" = inserted_id.mining_points) : null
+	data["id"] = inserted_id ? list("name" = "[inserted_id.registered_name] ([inserted_id.assignment])", "points" = inserted_id.mining_points, "total_points" = inserted_id.total_mining_points) : null
 	data["points"] = points
 	data["disk"] = inserted_disk ? list(
 		"name" = inserted_disk.name,
@@ -300,7 +300,8 @@
 				return
 			if(anyone_claim || (req_access_claim in inserted_id.access))
 				inserted_id.mining_points += points
-				to_chat(usr, "<span class='notice'>[points] points claimed.</span>")
+				inserted_id.total_mining_points += points
+				to_chat(usr, "<span class='notice'><b>[points] Mining Points</b> claimed. You have earned a total of <b>[inserted_id.total_mining_points] Mining Points</b> this Shift!</span>")
 				points = 0
 			else
 				to_chat(usr, "<span class='warning'>Required access not found.</span>")
@@ -327,12 +328,14 @@
 					return FALSE
 				var/stored = get_num_smeltable_alloy(D)
 				var/desired = min(amount, stored, MAX_STACK_SIZE)
+				if(!desired)
+					return FALSE
 				materials.use_amount(D.materials, desired)
 				// Spawn the alloy
 				var/result = new D.build_path(src)
 				if(istype(result, /obj/item/stack/sheet))
 					var/obj/item/stack/sheet/mineral/A = result
-					A.amount = amount
+					A.amount = desired
 					unload_mineral(A)
 				else
 					unload_mineral(result)
@@ -366,15 +369,21 @@
 			return FALSE
 	add_fingerprint(usr)
 
-/obj/machinery/mineral/ore_redemption/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
-	var/datum/asset/materials_assets = get_asset_datum(/datum/asset/simple/materials)
-	materials_assets.send(user)
+/obj/machinery/mineral/ore_redemption/ui_state(mob/user)
+	return GLOB.default_state
 
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/obj/machinery/mineral/ore_redemption/ui_interact(mob/user, datum/tgui/ui = null)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, ui_key, "OreRedemption", name, 500, 600)
+		ui = new(user, src, "OreRedemption", name)
 		ui.open()
 		ui.set_autoupdate(FALSE)
+
+/obj/machinery/mineral/ore_redemption/ui_assets(mob/user)
+	return list(
+		get_asset_datum(/datum/asset/spritesheet/materials),
+		get_asset_datum(/datum/asset/spritesheet/alloys)
+	)
 
 /**
   * Smelts the given stack of ore.
@@ -389,7 +398,11 @@
 	var/datum/component/material_container/materials = GetComponent(/datum/component/material_container)
 	var/amount_compatible = materials.get_item_material_amount(O)
 	if(amount_compatible)
-		materials.insert_item(O, sheet_per_ore)
+		// Prevents duping
+		if(O.refined_type)
+			materials.insert_item(O, sheet_per_ore)
+		else
+			materials.insert_item(O, 1)
 	// Delete the stack
 	ore_buffer -= O
 	qdel(O)
@@ -467,7 +480,7 @@
 		if(!(C.department in supply_consoles))
 			continue
 		if(!supply_consoles[C.department] || length(supply_consoles[C.department] - mats_in_stock))
-			C.createMessage("Ore Redemption Machine", "New Minerals Available!", msg, 1) // RQ_NORMALPRIORITY
+			C.createMessage("Ore Redemption Machine", "New Minerals Available!", msg, RQ_NORMALPRIORITY)
 
 /**
   * Tries to insert the ID card held by the given user into the machine.

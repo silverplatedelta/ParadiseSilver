@@ -80,7 +80,7 @@
 			health = min(100, health + 1)
 		if(T0C to (T20C + 20))
 			health = clamp(health, 0, 100)
-		if((T20C + 20) to (T0C + 70))
+		if((T20C + 20) to INFINITY)
 			health = max(0, health - 1)
 	if(health <= 0)
 		/*griefProtection() This seems to get called twice before running any code that deletes/damages the server or it's files anwyay.
@@ -355,9 +355,10 @@
 
 /obj/machinery/computer/rdservercontrol/emag_act(user as mob)
 	if(!emagged)
-		playsound(src.loc, 'sound/effects/sparks4.ogg', 75, 1)
+		playsound(loc, 'sound/effects/sparks4.ogg', 75, TRUE)
 		emagged = TRUE
 		to_chat(user, "<span class='notice'>You you disable the security protocols</span>")
+		return TRUE
 	src.updateUsrDialog()
 
 /obj/machinery/r_n_d/server/core

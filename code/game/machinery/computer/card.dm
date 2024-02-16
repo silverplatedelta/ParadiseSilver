@@ -21,6 +21,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	var/mode = 0
 	var/target_dept = 0 //Which department this computer has access to. 0=all departments
 	var/obj/item/radio/Radio
+	var/reset_timer
 
 	//Cooldown for closing positions in seconds
 	//if set to -1: No cooldown... probably a bad idea
@@ -49,8 +50,10 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		/datum/job/blueshield,
 		/datum/job/nanotrasenrep,
 		/datum/job/chaplain,
-		/datum/job/officer
-	)
+		/datum/job/officer,
+		/datum/job/qm
+)
+
 	//The scaling factor of max total positions in relation to the total amount of people on board the station in %
 	var/max_relative_positions = 30 //30%: Seems reasonable, limit of 6 @ 20 players
 
@@ -69,6 +72,10 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 /obj/machinery/computer/card/Destroy()
 	QDEL_NULL(Radio)
 	return ..()
+
+/obj/machinery/computer/card/examine(mob/user)
+	. = ..()
+	. += "<span class='notice'>You can <b>Alt-Click</b> [src] to remove the ID cards in it.</span>"
 
 /obj/machinery/computer/card/proc/is_centcom()
 	return FALSE
@@ -119,30 +126,31 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			"skin" = skin)))
 	return formatted
 
-/obj/machinery/computer/card/verb/eject_id()
-	set category = null
-	set name = "Eject ID Card"
-	set src in oview(1)
-
-	if(usr.incapacitated())
+/obj/machinery/computer/card/AltClick(mob/user)
+	if(user.stat || HAS_TRAIT(user, TRAIT_HANDS_BLOCKED) || !Adjacent(user))
 		return
 
 	if(scan)
-		to_chat(usr, "You remove \the [scan] from \the [src].")
-		scan.forceMove(get_turf(src))
-		if(!usr.get_active_hand() && Adjacent(usr))
-			usr.put_in_hands(scan)
+		to_chat(user, "<span class='notice'>You remove \the [scan] from \the [src].</span>")
+		if(!user.get_active_hand())
+			user.put_in_hands(scan)
+		else if(!user.put_in_inactive_hand(scan))
+			scan.forceMove(get_turf(src))
 		scan = null
 		playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
+		SStgui.update_uis(src)
+		return
 	else if(modify)
-		to_chat(usr, "You remove \the [modify] from \the [src].")
-		modify.forceMove(get_turf(src))
-		if(!usr.get_active_hand() && Adjacent(usr))
-			usr.put_in_hands(modify)
+		to_chat(user, "<span class='notice'>You remove \the [modify] from \the [src].</span>")
+		if(!user.get_active_hand())
+			user.put_in_hands(modify)
+		else if(!user.put_in_inactive_hand(modify))
+			modify.forceMove(get_turf(src))
 		modify = null
 		playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, 0)
+		SStgui.update_uis(src)
 	else
-		to_chat(usr, "There is nothing to remove from the console.")
+		to_chat(user, "There is nothing to remove from the console.")
 
 /obj/machinery/computer/card/attackby(obj/item/card/id/id_card, mob/user, params)
 	if(!istype(id_card))
@@ -179,6 +187,8 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			return FALSE
 		if(!job_in_department(job, FALSE))
 			return FALSE
+		if(job.job_banned_gamemode) // you cannot open a slot for more sec/legal after revs win
+			return FALSE
 		if((job.total_positions > GLOB.player_list.len * (max_relative_positions / 100)))
 			return FALSE
 		if(opened_positions[job.title] < 0)
@@ -196,6 +206,8 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		if(job_blacklisted_partial(job))
 			return FALSE
 		if(!job_in_department(job, FALSE))
+			return FALSE
+		if(job.job_banned_gamemode) // you cannot edit this slot after revs win
 			return FALSE
 		if(job in SSjobs.prioritized_jobs) // different to above
 			return FALSE
@@ -298,10 +310,24 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 
 	ui_interact(user)
 
-/obj/machinery/computer/card/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = TRUE, datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/obj/machinery/computer/card/ui_state(mob/user)
+	return GLOB.default_state
+
+/obj/machinery/computer/card/proc/change_ui_autoupdate(value, mob/user)
+	var/datum/tgui/ui = SStgui.try_update_ui(user, src)
+	reset_timer = null
+	if(ui)
+		ui.set_autoupdate(value)
+
+/obj/machinery/computer/card/ui_interact(mob/user, datum/tgui/ui = null)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, ui_key, "CardComputer",  name, 800, 800, master_ui, state)
+		ui = new(user, src, "CardComputer",  name)
+		var/delta = (world.time / 10) - GLOB.time_last_changed_position
+		if(change_position_cooldown < delta && !reset_timer)
+			ui.set_autoupdate(FALSE)
+		else
+			reset_timer = addtimer(CALLBACK(src, PROC_REF(change_ui_autoupdate), FALSE, user), delta SECONDS)
 		ui.open()
 
 /obj/machinery/computer/card/ui_data(mob/user)
@@ -375,7 +401,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 
 /obj/machinery/computer/card/proc/regenerate_id_name()
 	if(modify)
-		modify.name = text("[modify.registered_name]'s ID Card ([modify.assignment])")
+		modify.name = "[modify.registered_name]'s ID Card ([modify.assignment])"
 
 /obj/machinery/computer/card/ui_act(action, params)
 	if(..())
@@ -532,8 +558,8 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			SSjobs.log_job_transfer(modify.registered_name, jobnamedata, "Demoted", scan.registered_name, reason)
 			modify.lastlog = "[station_time_timestamp()]: DEMOTED by \"[scan.registered_name]\" ([scan.assignment]) from \"[jobnamedata]\" for: \"[reason]\"."
 			SSjobs.notify_dept_head(modify.rank, "[scan.registered_name] ([scan.assignment]) has demoted \"[modify.registered_name]\" ([jobnamedata]) for \"[reason]\".")
+			SSjobs.slot_job_transfer(modify.rank, "Assistant")
 			modify.access = access
-			modify.rank = "Assistant"
 			modify.assignment = "Demoted"
 			modify.icon_state = "id"
 			regenerate_id_name()
@@ -555,6 +581,9 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			SSjobs.log_job_transfer(modify.registered_name, jobnamedata, "Terminated", scan.registered_name, reason)
 			modify.lastlog = "[station_time_timestamp()]: TERMINATED by \"[scan.registered_name]\" ([scan.assignment]) from \"[jobnamedata]\" for: \"[reason]\"."
 			SSjobs.notify_dept_head(modify.rank, "[scan.registered_name] ([scan.assignment]) has terminated the employment of \"[modify.registered_name]\" the \"[jobnamedata]\" for \"[reason]\".")
+			var/datum/job/job = SSjobs.GetJob(modify.rank)
+			if(modify.assignment != "Demoted" && !(job.title in GLOB.command_positions))
+				job.current_positions--
 			modify.assignment = "Terminated"
 			modify.access = list()
 			regenerate_id_name()
@@ -570,6 +599,9 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 				return FALSE
 			if(opened_positions[edit_job_target] >= 0)
 				GLOB.time_last_changed_position = world.time / 10
+				change_ui_autoupdate(TRUE, usr)
+				reset_timer = addtimer(CALLBACK(src, PROC_REF(change_ui_autoupdate), FALSE, usr), GLOB.time_last_changed_position SECONDS)
+
 			j.total_positions++
 			opened_positions[edit_job_target]++
 			log_game("[key_name(usr)] ([scan.assignment]) has opened a job slot for job \"[j.title]\".")
@@ -587,6 +619,8 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			//Allow instant closing without cooldown if a position has been opened before
 			if(opened_positions[edit_job_target] <= 0)
 				GLOB.time_last_changed_position = world.time / 10
+				change_ui_autoupdate(TRUE, usr)
+				reset_timer = addtimer(CALLBACK(src, PROC_REF(change_ui_autoupdate), FALSE, usr), (GLOB.time_last_changed_position + 1) SECONDS)
 			j.total_positions--
 			opened_positions[edit_job_target]--
 			log_game("[key_name(usr)] ([scan.assignment]) has closed a job slot for job \"[j.title]\".")
@@ -755,6 +789,14 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	icon_screen = "idcmo"
 	req_access = list(ACCESS_CMO)
 	circuit = /obj/item/circuitboard/card/minor/cmo
+
+/obj/machinery/computer/card/minor/qm
+	name = "supply management console"
+	target_dept = TARGET_DEPT_SUP
+	icon_screen = "idqm"
+	light_color = COLOR_BROWN_ORANGE
+	req_access = list(ACCESS_QM)
+	circuit = /obj/item/circuitboard/card/minor/qm
 
 /obj/machinery/computer/card/minor/rd
 	name = "science management console"

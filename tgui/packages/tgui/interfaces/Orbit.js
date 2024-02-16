@@ -4,10 +4,10 @@ import {
   Box,
   Button,
   Divider,
-  Flex,
   Icon,
   Input,
   Section,
+  Stack,
 } from '../components';
 import { Window } from '../layouts';
 
@@ -89,7 +89,17 @@ const OrbitedButton = (props, context) => {
 
 export const Orbit = (props, context) => {
   const { act, data } = useBackend(context);
-  const { alive, antagonists, highlights, response_teams, auto_observe, dead, ghosts, misc, npcs } = data;
+  const {
+    alive,
+    antagonists,
+    highlights,
+    response_teams,
+    auto_observe,
+    dead,
+    ghosts,
+    misc,
+    npcs,
+  } = data;
 
   const [searchText, setSearchText] = useLocalState(context, 'searchText', '');
 
@@ -127,14 +137,14 @@ export const Orbit = (props, context) => {
   };
 
   return (
-    <Window resizable>
+    <Window width={700} height={500}>
       <Window.Content scrollable>
         <Section>
-          <Flex>
-            <Flex.Item>
-              <Icon name="search" mr={1} />
-            </Flex.Item>
-            <Flex.Item grow={1}>
+          <Stack>
+            <Stack.Item>
+              <Icon name="search" />
+            </Stack.Item>
+            <Stack.Item grow>
               <Input
                 placeholder="Search..."
                 autoFocus
@@ -143,26 +153,30 @@ export const Orbit = (props, context) => {
                 onInput={(_, value) => setSearchText(value)}
                 onEnter={(_, value) => orbitMostRelevant(value)}
               />
-            </Flex.Item>
-            <Flex.Item>
+            </Stack.Item>
+            <Stack.Item>
               <Divider vertical />
-            </Flex.Item>
-            <Flex.Item>
+            </Stack.Item>
+            <Stack.Item>
               <Button
                 inline
                 color="transparent"
                 tooltip="Refresh"
-                tooltipPosition="bottom-left"
+                tooltipPosition="bottom-start"
                 icon="sync-alt"
                 onClick={() => act('refresh')}
               />
-            </Flex.Item>
-          </Flex>
+            </Stack.Item>
+          </Stack>
         </Section>
         {antagonists.length > 0 && (
           <Section title="Antagonists">
             {sortedAntagonists.map(([name, antags]) => (
-              <Section key={name} title={`${name} - (${antags.length})`} level={2}>
+              <Section
+                key={name}
+                title={`${name} - (${antags.length})`}
+                level={2}
+              >
                 {antags
                   .filter(searchFor(searchText))
                   .sort(compareNumberedText)
@@ -180,7 +194,7 @@ export const Orbit = (props, context) => {
             searchText={searchText}
             color={'teal'}
           />
-          )}
+        )}
 
         <BasicSection
           title="Response Teams"

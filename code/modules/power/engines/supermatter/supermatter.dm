@@ -25,6 +25,7 @@
 #define POWERLOSS_INHIBITION_MOLE_THRESHOLD 20        //Higher == More moles of the gas are needed before the charge inertia chain reaction effect starts.        //Scales powerloss inhibition down until this amount of moles is reached
 #define POWERLOSS_INHIBITION_MOLE_BOOST_THRESHOLD 500  //bonus powerloss inhibition boost if this amount of moles is reached
 
+#define MOLE_CRUNCH_THRESHOLD 1700           //Above this value we can get lord singulo and
 #define MOLE_PENALTY_THRESHOLD 1800           //Above this value we can get lord singulo and independent mol damage, below it we can heal damage
 #define MOLE_HEAT_PENALTY 350                 //Heat damage scales around this. Too hot setups with this amount of moles do regular damage, anything above and below is scaled
 //Along with damage_penalty_point, makes flux anomalies.
@@ -58,7 +59,7 @@
 
 #define GRAVITATIONAL_ANOMALY "gravitational_anomaly"
 #define FLUX_ANOMALY "flux_anomaly"
-#define CRYO_ANOMALY "cryo_anomaly"
+#define BLUESPACE_ANOMALY "bluespace_anomaly"
 
 //If integrity percent remaining is less than these values, the monitor sets off the relevant alarm.
 #define SUPERMATTER_DELAM_PERCENT 5
@@ -217,8 +218,6 @@
 	var/heat_multiplier = 1
 	///amount of EER to ADD
 	var/power_additive = 0
-	/// A list of all previous events
-	var/list/last_events = list()
 	/// Time of next event
 	var/next_event_time
 	/// Run S-Class event? So we can only run one S-class event per round per crystal
@@ -377,11 +376,11 @@
 			SEND_SOUND(M, super_matter_charge_sound)
 
 			if(atoms_share_level(M, src))
-				to_chat(M, "<span class='boldannounce'>You feel reality distort for a moment...</span>")
+				to_chat(M, "<span class='boldannounceic'>You feel reality distort for a moment...</span>")
 			else
-				to_chat(M, "<span class='boldannounce'>You hold onto \the [M.loc] as hard as you can, as reality distorts around you. You feel safe.</span>")
+				to_chat(M, "<span class='boldannounceic'>You hold onto \the [M.loc] as hard as you can, as reality distorts around you. You feel safe.</span>")
 
-	if(combined_gas > MOLE_PENALTY_THRESHOLD)
+	if(combined_gas > MOLE_CRUNCH_THRESHOLD)
 		investigate_log("has collapsed into a singularity.", "supermatter")
 		if(T)
 			var/obj/singularity/S = new(T)
@@ -547,8 +546,10 @@
 			power = max((removed.temperature * temp_factor / T0C) * gasmix_power_ratio + power, 0)
 
 		if(prob(50))
-
-			radiation_pulse(src, power * max(0, (1 + (power_transmission_bonus / 10))))
+			var/mole_crunch_bonus = 0
+			if(combined_gas > MOLE_CRUNCH_THRESHOLD)
+				mole_crunch_bonus = 7000 //This adds 7000 EER worth of power to the SM. This should make mole crunch potentially worthy as a SM setup, if not risky. More stable than the anomalies, but very easy to push over the edge. Don't forget, a high EER setup can harvest power through zaps
+			radiation_pulse(src, power * max(0, (1 + (power_transmission_bonus / 10))) + mole_crunch_bonus)
 
 		//Power * 0.55 * a value between 1 and 0.8
 		var/device_energy = power * REACTION_POWER_MODIFIER
@@ -634,7 +635,7 @@
 		if(power > SEVERE_POWER_PENALTY_THRESHOLD && prob(5) || prob(1))
 			supermatter_anomaly_gen(src, GRAVITATIONAL_ANOMALY, rand(5, 10))
 		if((power > SEVERE_POWER_PENALTY_THRESHOLD && prob(2)) || (prob(0.3) && power > POWER_PENALTY_THRESHOLD))
-			supermatter_anomaly_gen(src, CRYO_ANOMALY, rand(5, 10))
+			supermatter_anomaly_gen(src, BLUESPACE_ANOMALY, rand(5, 10))
 
 	if(prob(15))
 		supermatter_pull(loc, min(power / 850, 3)) //850, 1700, 2550
@@ -667,7 +668,7 @@
 				if(powerloss_inhibitor < 0.5)
 					radio.autosay("DANGER: CHARGE INERTIA CHAIN REACTION IN PROGRESS.", name, "Engineering", list(z))
 
-			if(combined_gas > MOLE_PENALTY_THRESHOLD)
+			if(combined_gas > MOLE_CRUNCH_THRESHOLD)
 				radio.autosay("Warning: Critical coolant mass reached.", name, "Engineering", list(z))
 		//Boom (Mind blown)
 		if(damage > explosion_point)
@@ -698,7 +699,7 @@
 	for(var/M in GLOB.player_list)
 		if(atoms_share_level(M, src))
 			SEND_SOUND(M, supermatter_sound) //everyone goan know bout this
-			to_chat(M, "<span class='boldannounce'>A horrible screeching fills your ears, and a wave of dread washes over you...</span>")
+			to_chat(M, "<span class='boldannounceic'>A horrible screeching fills your ears, and a wave of dread washes over you...</span>")
 	qdel(src)
 	return gain
 
@@ -751,6 +752,9 @@
 
 /obj/machinery/atmospherics/supermatter_crystal/attack_hand(mob/living/user)
 	..()
+	if(HAS_TRAIT(user, TRAIT_SUPERMATTER_IMMUNE))
+		user.visible_message("<span class='notice'>[user] reaches out and pokes [src] harmlessly...somehow.</span>", "<span class='notice'>You poke [src].</span>")
+		return
 	dust_mob(user, cause = "hand")
 
 /obj/machinery/atmospherics/supermatter_crystal/proc/dust_mob(mob/living/nom, vis_msg, mob_msg, cause)
@@ -772,32 +776,39 @@
 		return
 	if(moveable && default_unfasten_wrench(user, I, time = 20))
 		return
+
 	if(istype(I, /obj/item/scalpel/supermatter))
-		if(ishuman(user))
-			var/mob/living/carbon/human/M = user
-			var/obj/item/scalpel/supermatter/scalpel = I
-			to_chat(M, "<span class='notice'>You carefully begin to scrape [src] with [I]...</span>")
-			if(I.use_tool(src, M, 10 SECONDS, volume = 100))
-				if(scalpel.uses_left)
-					to_chat(M, "<span class='danger'>You extract a sliver from [src], and it begins to react violently!</span>")
-					matter_power += 800
-					scalpel.uses_left--
-					if(!scalpel.uses_left)
-						to_chat(M, "<span class='boldwarning'>A tiny piece of [I] falls off, rendering it useless!</span>")
+		if(!ishuman(user))
+			return
 
-					var/obj/item/nuke_core/supermatter_sliver/S = new /obj/item/nuke_core/supermatter_sliver(drop_location())
+		var/mob/living/carbon/human/H = user
+		var/obj/item/scalpel/supermatter/scalpel = I
 
-					var/obj/item/retractor/supermatter/tongs = M.is_in_hands(/obj/item/retractor/supermatter)
+		if(!scalpel.uses_left)
+			to_chat(H, "<span class='warning'>[scalpel] isn't sharp enough to carve a sliver off of [src]!</span>")
+			return
 
-					if(tongs && !tongs.sliver)
-						tongs.sliver = S
-						S.forceMove(tongs)
-						tongs.icon_state = "supermatter_tongs_loaded"
-						tongs.item_state = "supermatter_tongs_loaded"
-						to_chat(M, "<span class='notice'>You pick up [S] with [tongs]!</span>")
-				else
-					to_chat(user, "<span class='warning'>You fail to extract a sliver from [src]! [I] isn't sharp enough anymore.</span>")
+		var/obj/item/nuke_core/supermatter_sliver/sliver = carve_sliver(H)
+		if(sliver)
+			scalpel.uses_left--
+			if(!scalpel.uses_left)
+				to_chat(H, "<span class='boldwarning'>A tiny piece falls off of [scalpel]'s blade, rendering it useless!</span>")
+
+			var/obj/item/retractor/supermatter/tongs = H.is_in_hands(/obj/item/retractor/supermatter)
+
+			if(tongs && !tongs.sliver)
+				tongs.sliver = sliver
+				sliver.forceMove(tongs)
+				tongs.icon_state = "supermatter_tongs_loaded"
+				tongs.item_state = "supermatter_tongs_loaded"
+				to_chat(H, "<span class='notice'>You pick up [sliver] with [tongs]!</span>")
+
 		return
+
+	if(istype(I, /obj/item/supermatter_halberd))
+		carve_sliver(user)
+		return
+
 	if(istype(I, /obj/item/retractor/supermatter))
 		to_chat(user, "<span class='notice'>[I] bounces off [src], you need to cut a sliver off first!</span>")
 	else if(user.drop_item())
@@ -811,6 +822,10 @@
 		radiation_pulse(src, 150, 4)
 
 /obj/machinery/atmospherics/supermatter_crystal/Bumped(atom/movable/AM)
+
+	if(HAS_TRAIT(AM, TRAIT_SUPERMATTER_IMMUNE))
+		return
+
 	if(isliving(AM))
 		AM.visible_message("<span class='danger'>[AM] slams into [src] inducing a resonance... [AM.p_their()] body starts to glow and burst into flames before flashing into dust!</span>",\
 		"<span class='userdanger'>You slam into [src] as your ears are filled with unearthly ringing. Your last thought is \"Oh, fuck.\"</span>",\
@@ -826,7 +841,8 @@
 
 /obj/machinery/atmospherics/supermatter_crystal/Bump(atom/A, yes)
 	..()
-	Bumped(A)
+	if(!istype(A, /obj/machinery/atmospherics/supermatter_crystal))
+		Bumped(A)
 
 /obj/machinery/atmospherics/supermatter_crystal/proc/Consume(atom/movable/AM)
 	if(isliving(AM))
@@ -889,7 +905,7 @@
 		else
 			remove_filter("icon")
 
-	if(combined_gas > MOLE_PENALTY_THRESHOLD)
+	if(combined_gas > MOLE_CRUNCH_THRESHOLD)
 		ray_filter_helper(1, power ? clamp((damage/100) * power, 50, 125) : 1, SUPERMATTER_SINGULARITY_RAYS_COLOUR, clamp(damage / 300, 1, 30), clamp(damage / 5, 12, 300))
 
 		add_filter(name = "outline", priority = 2, params = list(
@@ -919,7 +935,14 @@
 		remove_filter("outline")
 		QDEL_NULL(warp)
 
+/obj/machinery/atmospherics/supermatter_crystal/proc/carve_sliver(mob/living/user)
+	to_chat(user, "<span class='notice'>You begin carving a sliver off of [src]...</span>")
+	if(do_after_once(user, 4 SECONDS, FALSE, src))
+		to_chat(user, "<span class='danger'>You carve a sliver off of [src], and it begins to react violently!</span>")
+		matter_power += 800
 
+		var/obj/item/nuke_core/supermatter_sliver/S = new /obj/item/nuke_core/supermatter_sliver(drop_location())
+		return S
 
 // Change how bright the rock is
 /obj/machinery/atmospherics/supermatter_crystal/proc/lights()
@@ -935,13 +958,13 @@
 			l_power = 3,
 			l_color = SUPERMATTER_TESLA_COLOUR,
 		)
-	if(combined_gas > MOLE_PENALTY_THRESHOLD && get_integrity() > SUPERMATTER_DANGER_PERCENT)
+	if(combined_gas > MOLE_CRUNCH_THRESHOLD && get_integrity() > SUPERMATTER_DANGER_PERCENT)
 		set_light(
 			l_range = 4 + clamp((450 - damage) / 10, 1, 50),
 			l_power = 3,
 			l_color = SUPERMATTER_SINGULARITY_LIGHT_COLOUR,
 		)
-	if(!combined_gas > MOLE_PENALTY_THRESHOLD || !get_integrity() < SUPERMATTER_DANGER_PERCENT)
+	if(combined_gas <= MOLE_CRUNCH_THRESHOLD || get_integrity() >= SUPERMATTER_DANGER_PERCENT)
 		for(var/obj/D in darkness_effects)
 			qdel(D)
 		return
@@ -952,7 +975,7 @@
 		l_range = 4 + darkness_aoe,
 		l_power = -1 - darkness_strength,
 		l_color = "#ddd6cf")
-	if(!length(darkness_effects) && moveable) //Don't do this on movable sms oh god. Ideally don't do this at all, but hey, that's lightning for you
+	if(!length(darkness_effects) && !moveable) //Don't do this on movable sms oh god. Ideally don't do this at all, but hey, that's lightning for you
 		darkness_effects += new /obj/effect/abstract(locate(x-3,y+3,z))
 		darkness_effects += new /obj/effect/abstract(locate(x+3,y+3,z))
 		darkness_effects += new /obj/effect/abstract(locate(x-3,y-3,z))
@@ -1020,6 +1043,8 @@
 			var/mob/M = P
 			if(M.mob_negates_gravity())
 				continue //You can't pull someone nailed to the deck
+			if(HAS_TRAIT(M, TRAIT_SUPERMATTER_IMMUNE))
+				continue
 			else if(M.buckled)
 				var/atom/movable/buckler = M.buckled
 				if(buckler.unbuckle_mob(M, TRUE))
@@ -1031,12 +1056,12 @@
 	if(L)
 		switch(type)
 			if(FLUX_ANOMALY)
-				var/obj/effect/anomaly/flux/A = new(L, 300, FALSE)
+				var/obj/effect/anomaly/flux/A = new(L, 30 SECONDS, FALSE)
 				A.explosive = FALSE
 			if(GRAVITATIONAL_ANOMALY)
-				new /obj/effect/anomaly/grav(L, 250, FALSE, FALSE)
-			if(CRYO_ANOMALY)
-				new /obj/effect/anomaly/cryo(L, 200, FALSE)
+				new /obj/effect/anomaly/grav(L, 25 SECONDS, FALSE, FALSE)
+			if(BLUESPACE_ANOMALY)
+				new /obj/effect/anomaly/bluespace(L, 24 SECONDS, FALSE, FALSE, TRUE)
 
 /obj/machinery/atmospherics/supermatter_crystal/proc/supermatter_zap(atom/zapstart = src, range = 5, zap_str = 4000, zap_flags = ZAP_SUPERMATTER_FLAGS, list/targets_hit = list())
 	if(QDELETED(zapstart))
@@ -1126,6 +1151,7 @@
 		if(prob(80))
 			zap_flags &= ~ZAP_MACHINE_EXPLOSIVE
 		if(target_type == COIL)
+			zap_flags += ZAP_GENERATES_POWER
 			//In the best situation we can expect this to grow up to 2120kw before a delam/IT'S GONE TOO FAR FRED SHUT IT DOWN
 			//The formula for power gen is zap_str * zap_mod / 2 * capacitor rating, between 1 and 4
 			var/multi = 10
@@ -1136,6 +1162,7 @@
 					multi = 40
 			target.zap_act(zap_str * multi, zap_flags)
 			zap_str /= 3 //Coils should take a lot out of the power of the zap
+			zap_flags &= ~ZAP_GENERATES_POWER
 
 		else if(isliving(target))//If we got a fleshbag on our hands
 			var/mob/living/creature = target
@@ -1172,6 +1199,9 @@
 	power += amount
 	message_admins("[src] has been activated and given an increase EER of [amount] at [ADMIN_JMP(src)]")
 
+/obj/machinery/atmospherics/supermatter_crystal/on_crush_thing(atom/thing)
+	Bumped(thing)
+
 /obj/machinery/atmospherics/supermatter_crystal/proc/make_next_event_time()
 	// Some completely random bullshit to make a "bell curve"
 	var/fake_time = rand(5 MINUTES, 25 MINUTES)
@@ -1182,7 +1212,7 @@
 	next_event_time = fake_time + world.time
 
 /obj/machinery/atmospherics/supermatter_crystal/proc/try_events()
-	if(has_been_powered == FALSE)
+	if(!has_been_powered)
 		return
 	if(!next_event_time) // for when the SM starts
 		make_next_event_time()
@@ -1198,7 +1228,7 @@
 								/datum/supermatter_event/sierra_tier = 1)
 
 	var/datum/supermatter_event/event = pick(subtypesof(pickweight(events)))
-	if(istype(event, /datum/supermatter_event/sierra_tier) && has_run_sclass)
+	if(ispath(event, /datum/supermatter_event/sierra_tier) && has_run_sclass)
 		make_next_event_time()
 		return // We're only gonna have one s-class per round, take a break engineers
 	run_event(event)
@@ -1221,7 +1251,7 @@
 #undef HALLUCINATION_RANGE
 #undef GRAVITATIONAL_ANOMALY
 #undef FLUX_ANOMALY
-#undef CRYO_ANOMALY
+#undef BLUESPACE_ANOMALY
 #undef COIL
 #undef ROD
 #undef LIVING

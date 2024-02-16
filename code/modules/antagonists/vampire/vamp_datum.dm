@@ -26,6 +26,12 @@
 
 	/// list of the peoples UIDs that we have drained, and how much blood from each one
 	var/list/drained_humans = list()
+	blurb_text_color = COLOR_RED
+	blurb_text_outline_width = 0
+	blurb_r = 255
+	blurb_g = 221
+	blurb_b = 138
+	blurb_a = 1
 
 /datum/antagonist/mindslave/thrall
 	name = "Vampire Thrall"
@@ -329,22 +335,22 @@
 	check_vampire_upgrade(TRUE)
 
 /datum/antagonist/vampire/give_objectives()
-	add_objective(/datum/objective/blood)
-	add_objective(/datum/objective/assassinate)
-	add_objective(/datum/objective/steal)
+	add_antag_objective(/datum/objective/blood)
+	add_antag_objective(/datum/objective/assassinate)
+	add_antag_objective(/datum/objective/steal)
 
 	if(prob(20)) // 20% chance of getting survive. 80% chance of getting escape.
-		add_objective(/datum/objective/survive)
+		add_antag_objective(/datum/objective/survive)
 	else
-		add_objective(/datum/objective/escape)
+		add_antag_objective(/datum/objective/escape)
 
 /datum/antagonist/vampire/greet()
-	var/dat
+	var/list/messages = list()
 	SEND_SOUND(owner.current, sound('sound/ambience/antag/vampalert.ogg'))
-	dat = "<span class='danger'>You are a Vampire!</span><br>"
-	dat += {"To bite someone, target the head and use harm intent with an empty hand. Drink blood to gain new powers.
-		You are weak to holy things, starlight and fire. Don't go into space and avoid the Chaplain, the chapel and especially Holy Water."}
-	to_chat(owner.current, dat)
+	messages.Add("<span class='danger'>You are a Vampire!</span><br>")
+	messages.Add("To bite someone, target the head and use harm intent with an empty hand. Drink blood to gain new powers. \
+		You are weak to holy things, starlight and fire. Don't go into space and avoid the Chaplain, the chapel and especially Holy Water.")
+	return messages
 
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	mob_override = ..()
@@ -359,3 +365,6 @@
 /datum/hud/proc/remove_vampire_hud()
 	static_inventory -= vampire_blood_display
 	QDEL_NULL(vampire_blood_display)
+
+/datum/antagonist/vampire/custom_blurb()
+	return "On the date [GLOB.current_date_string], at [station_time_timestamp()],\n in the [station_name()], [get_area_name(owner.current, TRUE)]...\nThe hunt begins again..."

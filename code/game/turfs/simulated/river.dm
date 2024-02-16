@@ -4,7 +4,7 @@
 #define RANDOM_LOWER_X 50
 #define RANDOM_LOWER_Y 50
 
-/proc/spawn_rivers(target_z, nodes = 4, turf_type = /turf/simulated/floor/plating/lava/smooth/mapping_lava, whitelist_area = /area/lavaland/surface/outdoors, min_x = RANDOM_LOWER_X, min_y = RANDOM_LOWER_Y, max_x = RANDOM_UPPER_X, max_y = RANDOM_UPPER_Y, prob = 25, prob_loss = 11)
+/proc/spawn_rivers(target_z, nodes = 4, turf_type = /turf/simulated/floor/lava/mapping_lava, whitelist_area = /area/lavaland/surface/outdoors, min_x = RANDOM_LOWER_X, min_y = RANDOM_LOWER_Y, max_x = RANDOM_UPPER_X, max_y = RANDOM_UPPER_Y, prob = 25, prob_loss = 11)
 	var/list/river_nodes = list()
 	var/num_spawned = 0
 	var/list/possible_locs = block(locate(min_x, min_y, target_z), locate(max_x, max_y, target_z))
@@ -20,7 +20,7 @@
 	//make some randomly pathing rivers
 	for(var/A in river_nodes)
 		var/obj/effect/landmark/river_waypoint/W = A
-		if (W.z != target_z || W.connected)
+		if(W.z != target_z || W.connected)
 			continue
 		W.connected = TRUE
 		var/turf/cur_turf = get_turf(W)
@@ -46,8 +46,8 @@
 				cur_dir = get_dir(cur_turf, target_turf)
 
 			cur_turf = get_step(cur_turf, cur_dir)
-			if(cur_turf == null) //This might be the fuck up. Kill the loop if this happens
-				message_admins("Encountered a null turf in river loop.")
+			if(isnull(cur_turf)) //This might be the fuck up. Kill the loop if this happens
+				stack_trace("Encountered a null turf in river loop, target turf was [target_turf], x=[target_turf.x], y=[target_turf.y].")
 				break
 			var/area/new_area = get_area(cur_turf)
 			if(!istype(new_area, whitelist_area) || (cur_turf.flags & NO_LAVA_GEN)) //Rivers will skip ruins
@@ -80,7 +80,7 @@
 	for(var/F in RANGE_TURFS(1, src) - src)
 		var/turf/T = F
 		var/area/new_area = get_area(T)
-		if(!T || (T.density && !ismineralturf(T)) || istype(T, /turf/simulated/floor/indestructible) || (whitelisted_area && !istype(new_area, whitelisted_area)) || (T.flags & NO_LAVA_GEN) )
+		if(!T || (T.density && !ismineralturf(T)) || istype(T, /turf/simulated/floor/indestructible) || (whitelisted_area && !istype(new_area, whitelisted_area)) || (T.flags & NO_LAVA_GEN))
 			continue
 
 		if(!logged_turf_type && ismineralturf(T))

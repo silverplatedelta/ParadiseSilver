@@ -1,3 +1,9 @@
+#define MALF_AI_ROLL_TIME 0.5 SECONDS
+#define MALF_AI_ROLL_COOLDOWN (1 SECONDS + MALF_AI_ROLL_TIME)
+#define MALF_AI_ROLL_DAMAGE 75
+// crit percent
+#define MALF_AI_ROLL_CRIT_CHANCE 5
+
 //The malf AI action subtype. All malf actions are subtypes of this.
 /datum/action/innate/ai
 	name = "AI Action"
@@ -153,7 +159,7 @@
 		return
 
 	for(var/datum/AI_Module/AM in possible_modules)
-		if (href_list[AM.mod_pick_name])
+		if(href_list[AM.mod_pick_name])
 
 			// Cost check
 			if(AM.cost > processing_time)
@@ -241,7 +247,7 @@
 /datum/action/innate/ai/nuke_station/proc/set_us_up_the_bomb()
 	to_chat(owner_AI, "<span class='notice'>Nuclear device armed.</span>")
 	GLOB.major_announcement.Announce("Hostile runtimes detected in all station systems, please deactivate your AI to prevent possible damage to its morality core.", "Anomaly Alert", 'sound/AI/aimalf.ogg')
-	set_security_level("delta")
+	SSsecurity_level.set_level(SEC_LEVEL_DELTA)
 	owner_AI.nuking = TRUE
 	var/obj/machinery/doomsday_device/DOOM = new /obj/machinery/doomsday_device(owner_AI)
 	owner_AI.doomsday_device = DOOM
@@ -268,7 +274,7 @@
 
 /obj/machinery/doomsday_device/Destroy()
 	STOP_PROCESSING(SSfastprocess, src)
-	SSshuttle.emergencyNoEscape = 0
+	SSshuttle.clearHostileEnvironment(src)
 	if(SSshuttle.emergency.mode == SHUTTLE_STRANDED)
 		SSshuttle.emergency.mode = SHUTTLE_DOCKED
 		SSshuttle.emergency.timer = world.time
@@ -279,7 +285,7 @@
 	detonation_timer = world.time + default_timer
 	timing = TRUE
 	START_PROCESSING(SSfastprocess, src)
-	SSshuttle.emergencyNoEscape = 1
+	SSshuttle.registerHostileEnvironment(src)
 
 /obj/machinery/doomsday_device/proc/seconds_remaining()
 	. = max(0, (round(detonation_timer - world.time) / 10))
@@ -288,7 +294,7 @@
 	var/turf/T = get_turf(src)
 	if(!T || !is_station_level(T.z))
 		GLOB.major_announcement.Announce("DOOMSDAY DEVICE OUT OF STATION RANGE, ABORTING", "ERROR ER0RR $R0RRO$!R41.%%!!(%$^^__+ @#F0E4", 'sound/misc/notice1.ogg')
-		SSshuttle.emergencyNoEscape = 0
+		SSshuttle.clearHostileEnvironment(src)
 		if(SSshuttle.emergency.mode == SHUTTLE_STRANDED)
 			SSshuttle.emergency.mode = SHUTTLE_DOCKED
 			SSshuttle.emergency.timer = world.time
@@ -329,12 +335,13 @@
 	unlock_sound = 'sound/items/rped.ogg'
 
 /datum/AI_Module/upgrade_turrets/upgrade(mob/living/silicon/ai/AI)
-	for(var/obj/machinery/porta_turret/turret in GLOB.machines)
+	for(var/obj/machinery/porta_turret/ai_turret/turret in GLOB.machines)
 		var/turf/T = get_turf(turret)
 		if(is_station_level(T.z))
 			turret.health += 30
-			turret.eprojectile = /obj/item/projectile/beam/laser/heavylaser //Once you see it, you will know what it means to FEAR.
+			turret.eprojectile = /obj/item/projectile/beam/laser/ai_turret/heavylaser //Once you see it, you will know what it means to FEAR.
 			turret.eshot_sound = 'sound/weapons/lasercannonfire.ogg'
+	AI.turrets_upgraded = TRUE
 
 //Hostile Station Lockdown: Locks, bolts, and electrifies every airlock on the station. After 90 seconds, the doors reset.
 /datum/AI_Module/lockdown
@@ -376,7 +383,10 @@
 
 /datum/action/innate/ai/destroy_rcds/Activate()
 	for(var/obj/item/rcd/RCD in GLOB.rcd_list)
-		if(!istype(RCD, /obj/item/rcd/borg)) //Ensures that cyborg RCDs are spared.
+		if(istype(RCD, /obj/item/rcd/borg)) //Ensures that cyborg RCDs are spared.
+			continue
+		var/turf/RCD_turf = get_turf(RCD)
+		if(is_level_reachable(RCD_turf.z))
 			RCD.detonate_pulse()
 
 	to_chat(owner, "<span class='danger'>RCD detonation pulse emitted.</span>")
@@ -451,27 +461,27 @@
 /datum/AI_Module/overload_machine
 	module_name = "Machine Overload"
 	mod_pick_name = "overload"
-	description = "Overheats an electrical machine, causing a small explosion and destroying it. Two uses per purchase."
+	description = "Overheats an electrical machine, causing a moderately-sized explosion and destroying it. Four uses per purchase."
 	cost = 20
 	power_type = /datum/action/innate/ai/ranged/overload_machine
 	unlock_text = "<span class='notice'>You enable the ability for the station's APCs to direct intense energy into machinery.</span>"
 
 /datum/action/innate/ai/ranged/overload_machine
 	name = "Overload Machine"
-	desc = "Overheats a machine, causing a small explosion after a short time."
+	desc = "Overheats a machine, causing a moderately-sized explosion after a short time."
 	button_icon_state = "overload_machine"
-	uses = 2
+	uses = 4
 	linked_ability_type = /obj/effect/proc_holder/ranged_ai/overload_machine
 
 /datum/action/innate/ai/ranged/overload_machine/proc/detonate_machine(obj/machinery/M)
 	if(M && !QDELETED(M))
-		explosion(get_turf(M), 0,1,1,0)
+		explosion(get_turf(M), 0, 3, 5, 0)
 		if(M) //to check if the explosion killed it before we try to delete it
 			qdel(M)
 
 /obj/effect/proc_holder/ranged_ai/overload_machine
 	active = FALSE
-	ranged_mousepointer = 'icons/effects/overload_machine_target.dmi'
+	ranged_mousepointer = 'icons/effects/cult_target.dmi'
 	enable_text = "<span class='notice'>You tap into the station's powernet. Click on a machine to detonate it, or use the ability again to cancel.</span>"
 	disable_text = "<span class='notice'>You release your hold on the powernet.</span>"
 
@@ -617,6 +627,107 @@
 		to_chat(src, "<span class='warning'>[alert_msg]</span>")
 	return success
 
+//Turret Assembly: Assemble an AI turret at the chosen location. One use per purchase
+/datum/AI_Module/place_turret
+	module_name = "Deploy Turret"
+	mod_pick_name = "turretdeployer"
+	description = "Build a turret anywhere that lethally targets organic life in sight."
+	cost = 30
+	power_type = /datum/action/innate/ai/place_turret
+	unlock_text = "<span class='notice'>You prepare an energy turret for deployment.</span>"
+	unlock_sound = 'sound/items/rped.ogg'
+
+/datum/action/innate/ai/place_turret
+	name = "Deploy Turret"
+	desc = "Build a turret anywhere that lethally targets organic life in sight."
+	button_icon_state = "deploy_turret"
+	uses = 1
+	auto_use_uses = FALSE
+	var/image/turf_overlay
+
+/datum/action/innate/ai/place_turret/New()
+	..()
+	turf_overlay = image('icons/turf/overlays.dmi')
+
+/datum/action/innate/ai/place_turret/Activate()
+	if(active)
+		to_chat(owner, "<span class='notice'>Your assemblers can only construct one turret at a time.</span>")
+		return
+	if(!owner_AI.can_place_turret(src))
+		return
+	active = TRUE
+	var/response = alert(owner, "Are you sure you want to place a turret here? Deployment will take a few seconds to complete, in which the turret will be vulnerable.", "Are you sure?", "No", "Yes")
+	if(!response || response == "No")
+		active = FALSE
+		return
+	if(!owner_AI.can_place_turret(src))
+		active = FALSE
+		return
+	deploy_turret()
+	active = FALSE
+
+/datum/action/innate/ai/place_turret/proc/deploy_turret()
+	var/turf/T = get_turf(owner_AI.eyeobj)
+
+	//Handles the turret construction and configuration
+	playsound(T, 'sound/items/rped.ogg', 100, TRUE) //Plays a sound both at the location of the construction to alert players and to the user as feedback
+	owner.playsound_local(owner, 'sound/items/rped.ogg', 50, FALSE, use_reverb = FALSE)
+	to_chat(owner, "<span class='notice'>You order your electronics to assemble a turret. This will take a few seconds.</span>")
+	var/obj/effect/temp_visual/rcd_effect/spawning_effect = new(T)
+	QDEL_IN(spawning_effect, 5 SECONDS)
+
+	//Deploys as lethal. Nonlethals can be enabled.
+	var/obj/machinery/porta_turret/turret = new /obj/machinery/porta_turret/ai_turret(T)
+	turret.disabled = TRUE
+	turret.lethal = TRUE
+	turret.raised = TRUE //While raised, it is vulnerable to damage
+	turret.targetting_is_configurable = FALSE
+	turret.check_synth = TRUE
+	turret.invisibility = 100
+
+	//If turrets are already upgraded, beef it up
+	if(owner_AI.turrets_upgraded)
+		turret.health += 30
+		turret.eprojectile = /obj/item/projectile/beam/laser/ai_turret/heavylaser //Big gun
+		turret.eshot_sound = 'sound/weapons/lasercannonfire.ogg'
+
+	if(do_after_once(owner, 5 SECONDS, target = T, allow_moving = TRUE)) //Once this is done, turret is armed and dangerous
+		turret.raised = initial(turret.raised)
+		turret.invisibility = initial(turret.invisibility)
+		turret.disabled = initial(turret.disabled)
+		new /obj/effect/temp_visual/rcd_effect/end(T)
+		playsound(T, 'sound/items/deconstruct.ogg', 100, TRUE)
+		to_chat(owner, "<span class='notice'>Turret deployed.</span>")
+		adjust_uses(-1)
+
+/mob/living/silicon/ai/proc/can_place_turret(datum/action/innate/ai/place_turret/action)
+	if(!eyeobj || !isturf(eyeobj.loc) || incapacitated() || !action)
+		return
+
+	var/turf/simulated/floor/deploylocation = get_turf(eyeobj)
+
+	var/image/I = action.turf_overlay
+	I.loc = deploylocation
+	client.images += I
+	I.icon_state = "redOverlay"
+	var/datum/camerachunk/C = GLOB.cameranet.getCameraChunk(deploylocation.x, deploylocation.y, deploylocation.z)
+
+	if(!istype(deploylocation))
+		to_chat(src, "<span class='warning'>There isn't enough room! Make sure you are placing the machine in a clear area and on a floor.</span>")
+		return FALSE
+	if(!C.visibleTurfs[deploylocation])
+		to_chat(src, "<span class='warning'>You don't have camera vision of this location!</span>")
+		addtimer(CALLBACK(src, PROC_REF(remove_transformer_image), client, I, deploylocation), 3 SECONDS)
+		return FALSE
+	if(is_blocked_turf(deploylocation))
+		to_chat(src, "<span class='warning'>That area must be clear of objects!</span>")
+		addtimer(CALLBACK(src, PROC_REF(remove_transformer_image), client, I, deploylocation), 3 SECONDS)
+		return FALSE
+
+	I.icon_state = "greenOverlay" //greenOverlay and redOverlay for success and failure respectively
+	addtimer(CALLBACK(src, PROC_REF(remove_transformer_image), client, I, deploylocation), 3 SECONDS)
+	return TRUE
+
 //Blackout: Overloads a random number of lights across the station. Three uses.
 /datum/AI_Module/blackout
 	module_name = "Blackout"
@@ -739,6 +850,7 @@
 
 /datum/AI_Module/cameracrack/upgrade(mob/living/silicon/ai/AI)
 	if(AI.builtInCamera)
+		AI.cracked_camera = TRUE
 		QDEL_NULL(AI.builtInCamera)
 
 /datum/AI_Module/engi_upgrade
@@ -807,13 +919,101 @@
 		return
 	is_active = TRUE
 	ranged_ability_user.playsound_local(ranged_ability_user, "sparks", 50, FALSE, use_reverb = FALSE)
-	attached_action.adjust_uses(-1)
+	var/datum/action/innate/ai/ranged/repair_cyborg/actual_action = attached_action
+	actual_action.adjust_uses(-1)
 	robot_target.audible_message("<span class='italics'>You hear a loud electrical buzzing sound coming from [robot_target]!</span>")
 	if(!do_mob(caller, robot_target, 10 SECONDS))
 		is_active = FALSE
 		return
 	is_active = FALSE
-	var/datum/action/innate/ai/ranged/repair_cyborg/actual_action = attached_action
 	actual_action.fix_borg(robot_target)
 	remove_ranged_ability(ranged_ability_user, "<span class='warning'>[robot_target] successfully rebooted.</span>")
 	return TRUE
+
+/datum/AI_Module/core_tilt
+	module_name = "Rolling Servos"
+	mod_pick_name = "watchforrollingcores"
+	description = "Allows you to slowly roll your core around, crushing anything in your path with your bulk."
+	cost = 10
+	one_purchase = FALSE
+	power_type = /datum/action/innate/ai/ranged/core_tilt
+	unlock_sound = 'sound/effects/bang.ogg'
+	unlock_text = "<span class='notice'>You gain the ability to roll over and crush anything in your way.</span>"
+
+/datum/action/innate/ai/ranged/core_tilt
+	name = "Roll Over"
+	button_icon_state = "roll_over"
+	desc = "Allows you to roll over in the direction of your choosing, crushing anything in your way."
+	auto_use_uses = FALSE
+	linked_ability_type = /obj/effect/proc_holder/ranged_ai/roll_over
+
+
+/obj/effect/proc_holder/ranged_ai/roll_over
+	active = FALSE
+	ranged_mousepointer = 'icons/effects/cult_target.dmi'
+	enable_text = "<span class='notice'>Your inner servos shift as you prepare to roll around. Click adjacent tiles to roll into them!</span>"
+	disable_text = "<span class='notice'>You disengage your rolling protocols.</span>"
+	COOLDOWN_DECLARE(time_til_next_tilt)
+	/// How long does it take us to roll?
+	var/roll_over_time = MALF_AI_ROLL_TIME
+	/// How long does it take for the ability to cool down, on top of [roll_over_time]?
+	var/roll_over_cooldown = MALF_AI_ROLL_COOLDOWN
+
+
+/obj/effect/proc_holder/ranged_ai/roll_over/InterceptClickOn(mob/living/caller, params, atom/target_atom)
+	if(..())
+		return
+	if(!isAI(ranged_ability_user))
+		return
+	if(ranged_ability_user.incapacitated() || !isturf(ranged_ability_user.loc))
+		remove_ranged_ability()
+		return
+	if(!COOLDOWN_FINISHED(src, time_til_next_tilt))
+		to_chat(ranged_ability_user, "<span class='warning'>Your rolling capacitors are still powering back up!</span>")
+		return
+
+	var/turf/target = get_turf(target_atom)
+	if(isnull(target))
+		return
+
+	if(target == get_turf(ranged_ability_user))
+		to_chat(ranged_ability_user, "<span class='warning'>You can't roll over on yourself!</span>")
+		return
+
+	var/picked_dir = get_dir(caller, target)
+	if(!picked_dir)
+		return FALSE
+	// we can move during the timer so we cant just pass the ref
+	var/turf/temp_target = get_step(ranged_ability_user, picked_dir)
+
+	new /obj/effect/temp_visual/single_user/ai_telegraph(temp_target, ranged_ability_user)
+	ranged_ability_user.visible_message("<span class='danger'>[ranged_ability_user] seems to be winding up!</span>")
+	addtimer(CALLBACK(src, PROC_REF(do_roll_over), caller, picked_dir), MALF_AI_ROLL_TIME)
+
+	to_chat(ranged_ability_user, "<span class='warning'>Overloading machine circuitry...</span>")
+
+	COOLDOWN_START(src, time_til_next_tilt, roll_over_cooldown)
+
+	return TRUE
+
+/obj/effect/proc_holder/ranged_ai/roll_over/proc/do_roll_over(mob/living/silicon/ai/ai_caller, picked_dir)
+	var/turf/target = get_step(ai_caller, picked_dir) // in case we moved we pass the dir not the target turf
+
+	if(isnull(target) || ai_caller.incapacitated() || !isturf(ai_caller.loc))
+		return
+
+
+	var/paralyze_time = clamp(6 SECONDS, 0 SECONDS, (roll_over_cooldown * 0.9)) // the clamp prevents stunlocking as the max is always a little less than the cooldown between rolls
+	ai_caller.allow_teleporter = TRUE
+	ai_caller.fall_and_crush(target, MALF_AI_ROLL_DAMAGE, prob(MALF_AI_ROLL_CRIT_CHANCE), 2, null, paralyze_time, crush_dir = picked_dir, angle = get_rotation_from_dir(picked_dir))
+	ai_caller.allow_teleporter = FALSE
+
+/obj/effect/proc_holder/ranged_ai/roll_over/proc/get_rotation_from_dir(dir)
+	switch(dir)
+		if(NORTH, NORTHWEST, WEST, SOUTHWEST)
+			return 270 // try our best to not return 180 since it works badly with animate
+		if(EAST, NORTHEAST, SOUTH, SOUTHEAST)
+			return 90
+		else
+			stack_trace("non-standard dir entered to get_rotation_from_dir. (got: [dir])")
+			return 0

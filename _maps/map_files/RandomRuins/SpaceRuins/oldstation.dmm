@@ -59,10 +59,10 @@
 /turf/simulated/wall,
 /area/ruin/ancientstation/comm)
 "an" = (
-/obj/effect/spawner/window/reinforced,
 /obj/machinery/door/poddoor{
 	id_tag = "ancient"
 	},
+/obj/effect/spawner/window/reinforced/grilled,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/comm)
 "ao" = (
@@ -86,7 +86,7 @@
 /turf/simulated/floor/plasteel/dark,
 /area/ruin/ancientstation/hivebot)
 "as" = (
-/turf/simulated/floor/plating,
+/turf/simulated/floor/plating/airless,
 /area/ruin/ancientstation/hivebot)
 "at" = (
 /obj/effect/decal/cleanable/dirt,
@@ -94,27 +94,18 @@
 /area/ruin/ancientstation/comm)
 "au" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/comm)
 "av" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /obj/item/paper/fluff/ruins/oldstation/damagereport,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/comm)
 "aw" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /obj/item/paper/fluff/ruins/oldstation/report,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/comm)
@@ -272,7 +263,7 @@
 /obj/structure/table,
 /obj/machinery/atmospherics/unary/vent_pump/on,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/coin,
+/obj/item/coin/gold,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/comm)
 "aU" = (
@@ -372,10 +363,7 @@
 /area/ruin/ancientstation/comm)
 "bi" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /turf/simulated/floor/plasteel{
 	dir = 8;
 	icon_state = "blue"
@@ -383,10 +371,7 @@
 /area/ruin/ancientstation/comm)
 "bj" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /turf/simulated/floor/plasteel{
 	dir = 4;
 	icon_state = "blue"
@@ -524,9 +509,7 @@
 	d2 = 4;
 	icon_state = "2-4"
 	},
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
@@ -566,9 +549,7 @@
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "bK" = (
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
@@ -578,7 +559,7 @@
 /turf/simulated/wall,
 /area/ruin/ancientstation)
 "bM" = (
-/obj/effect/spawner/window/reinforced,
+/obj/effect/spawner/window/reinforced/grilled,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/thetacorridor)
 "bN" = (
@@ -639,13 +620,13 @@
 /turf/template_noop,
 /area/template_noop)
 "bW" = (
-/obj/effect/spawner/window/reinforced,
-/obj/structure/transit_tube,
+/obj/effect/spawner/window/reinforced/grilled,
+/obj/structure/transit_tube/horizontal,
 /turf/simulated/floor/plating/airless,
 /area/ruin/ancientstation/betanorth)
 "bX" = (
-/obj/effect/spawner/window/reinforced,
-/obj/structure/transit_tube,
+/obj/effect/spawner/window/reinforced/grilled,
+/obj/structure/transit_tube/horizontal,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation)
 "bY" = (
@@ -656,7 +637,7 @@
 	dir = 1
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/arrow{
+/obj/effect/turf_decal/arrows/black{
 	dir = 1
 	},
 /turf/simulated/floor/plasteel/airless,
@@ -742,8 +723,8 @@
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "cj" = (
-/obj/effect/spawner/window/reinforced,
-/obj/structure/transit_tube,
+/obj/effect/spawner/window/reinforced/grilled,
+/obj/structure/transit_tube/horizontal,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/thetacorridor)
 "ck" = (
@@ -813,9 +794,7 @@
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/thetacorridor)
 "ct" = (
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel,
@@ -1088,9 +1067,7 @@
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation)
 "de" = (
-/obj/structure/transit_tube{
-	icon_state = "E-W-Pass"
-	},
+/obj/structure/transit_tube/crossing/horizontal,
 /turf/template_noop,
 /area/space/nearstation)
 "df" = (
@@ -1145,12 +1122,6 @@
 /obj/machinery/door/airlock/research,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/rnd)
-"dn" = (
-/obj/structure/transit_tube{
-	icon_state = "N-S"
-	},
-/turf/template_noop,
-/area/space/nearstation)
 "do" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 5
@@ -1231,17 +1202,14 @@
 	},
 /area/ruin/ancientstation/comm)
 "dy" = (
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/sec)
 "dz" = (
 /obj/structure/transit_tube/station/reverse,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/arrow,
+/obj/effect/turf_decal/arrows/black,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "dA" = (
@@ -1308,9 +1276,7 @@
 	d2 = 4;
 	icon_state = "2-4"
 	},
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
 /mob/living/simple_animal/hostile/hivebot/strong,
@@ -1436,10 +1402,7 @@
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/sec)
 "dZ" = (
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel{
 	dir = 1;
@@ -1546,9 +1509,7 @@
 	name = "west bump";
 	pixel_x = -24
 	},
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel{
 	dir = 9;
@@ -1672,7 +1633,7 @@
 /turf/simulated/floor/plating/airless,
 /area/ruin/ancientstation/betanorth)
 "eC" = (
-/obj/effect/spawner/window/reinforced,
+/obj/effect/spawner/window/reinforced/grilled,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/engi)
 "eD" = (
@@ -1715,9 +1676,7 @@
 /obj/machinery/light/small{
 	dir = 4
 	},
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel{
 	dir = 5;
@@ -2018,13 +1977,6 @@
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel/airless,
 /area/ruin/ancientstation/betanorth)
-"ft" = (
-/obj/machinery/atmospherics/pipe/simple/hidden/supply{
-	dir = 4
-	},
-/obj/effect/decal/cleanable/dirt,
-/turf/simulated/floor/plasteel,
-/area/ruin/ancientstation/betanorth)
 "fu" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -2189,7 +2141,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
 	},
-/obj/effect/spawner/window/reinforced,
+/obj/effect/spawner/window/reinforced/grilled,
 /obj/structure/cable{
 	d2 = 8;
 	icon_state = "0-8"
@@ -2421,7 +2373,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
 	},
-/obj/effect/spawner/window/reinforced,
+/obj/effect/spawner/window/reinforced/grilled,
 /obj/structure/cable{
 	d2 = 8;
 	icon_state = "0-8"
@@ -2436,12 +2388,12 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
 	},
-/obj/effect/spawner/window/reinforced,
 /obj/structure/cable{
 	d1 = 4;
 	d2 = 8;
 	icon_state = "4-8"
 	},
+/obj/effect/spawner/window/reinforced/grilled,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/thetacorridor)
 "ga" = (
@@ -2627,7 +2579,7 @@
 /area/ruin/ancientstation/kitchen)
 "gu" = (
 /obj/structure/table,
-/obj/item/reagent_containers/food/drinks/cans/cola,
+/obj/item/reagent_containers/drinks/cans/cola,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/sec)
@@ -2855,10 +2807,7 @@
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/thetacorridor)
 "gX" = (
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /obj/item/card/id/away/old/apc,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel{
@@ -3381,11 +3330,11 @@
 /area/ruin/ancientstation/kitchen)
 "ia" = (
 /obj/structure/table,
-/obj/item/reagent_containers/food/condiment/saltshaker{
+/obj/item/reagent_containers/condiment/saltshaker{
 	pixel_x = -2;
 	pixel_y = 2
 	},
-/obj/item/reagent_containers/food/condiment/peppermill{
+/obj/item/reagent_containers/condiment/peppermill{
 	pixel_x = 5;
 	pixel_y = -2
 	},
@@ -3734,24 +3683,6 @@
 	},
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/powered)
-"iO" = (
-/obj/structure/cable/yellow{
-	d1 = 1;
-	d2 = 2;
-	icon_state = "1-2"
-	},
-/obj/structure/lattice/catwalk,
-/turf/simulated/floor/plating,
-/area/space/nearstation)
-"iP" = (
-/obj/structure/cable/yellow{
-	d1 = 1;
-	d2 = 8;
-	icon_state = "1-8"
-	},
-/obj/structure/lattice/catwalk,
-/turf/simulated/floor/plating,
-/area/space/nearstation)
 "iQ" = (
 /obj/machinery/light/small,
 /obj/effect/decal/cleanable/dirt,
@@ -3864,9 +3795,7 @@
 	icon_state = "1-4"
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "jd" = (
@@ -3891,9 +3820,7 @@
 /area/ruin/ancientstation)
 "jg" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "jh" = (
@@ -3904,9 +3831,7 @@
 	tag = "90Curve"
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/thetacorridor)
 "ji" = (
@@ -3961,9 +3886,7 @@
 /area/ruin/ancientstation/thetacorridor)
 "jo" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/item/kirbyplants{
-	icon_state = "plant-dead"
-	},
+/obj/item/kirbyplants/dead,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/thetacorridor)
 "jp" = (
@@ -4084,7 +4007,9 @@
 	in_use = 1
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/west,
+/obj/effect/turf_decal/stripes/line{
+	dir = 8
+	},
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
 "jE" = (
@@ -4140,7 +4065,9 @@
 	in_use = 1
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/east,
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
 "jJ" = (
@@ -4156,7 +4083,7 @@
 /turf/simulated/floor/engine/vacuum,
 /area/ruin/ancientstation/atmo)
 "jL" = (
-/obj/effect/spawner/window/reinforced,
+/obj/effect/spawner/window/reinforced/grilled,
 /turf/simulated/floor/plating/airless,
 /area/ruin/ancientstation/atmo)
 "jM" = (
@@ -4187,16 +4114,24 @@
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "jP" = (
-/obj/effect/decal/warning_stripes/southeast,
-/obj/effect/decal/warning_stripes/northwest,
+/obj/effect/turf_decal/stripes/line{
+	dir = 6
+	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 9
+	},
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/showcase/machinery/oldpod,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "jQ" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
-/obj/effect/decal/warning_stripes/southeast,
-/obj/effect/decal/warning_stripes/northwest,
+/obj/effect/turf_decal/stripes/line{
+	dir = 6
+	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 9
+	},
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/showcase/machinery/oldpod,
 /turf/simulated/floor/plasteel,
@@ -4227,7 +4162,9 @@
 /area/ruin/ancientstation/proto)
 "jU" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/west,
+/obj/effect/turf_decal/stripes/line{
+	dir = 8
+	},
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
 "jV" = (
@@ -4236,7 +4173,9 @@
 /area/ruin/ancientstation/proto)
 "jW" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/east,
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
 "jX" = (
@@ -4298,10 +4237,7 @@
 /area/ruin/ancientstation)
 "kf" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/powered)
 "kg" = (
@@ -4325,8 +4261,12 @@
 /area/ruin/ancientstation)
 "ki" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/southwestcorner,
-/obj/effect/decal/warning_stripes/northwestcorner,
+/obj/effect/turf_decal/stripes/corner{
+	dir = 8
+	},
+/obj/effect/turf_decal/stripes/corner{
+	dir = 1
+	},
 /obj/machinery/firealarm{
 	dir = 8;
 	name = "west bump";
@@ -4336,8 +4276,10 @@
 /area/ruin/ancientstation/proto)
 "kj" = (
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/northeastcorner,
-/obj/effect/decal/warning_stripes/southeastcorner,
+/obj/effect/turf_decal/stripes/corner{
+	dir = 4
+	},
+/obj/effect/turf_decal/stripes/corner,
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
 "kk" = (
@@ -4431,15 +4373,6 @@
 	},
 /turf/simulated/floor/plating/airless,
 /area/ruin/ancientstation/atmo)
-"kv" = (
-/obj/structure/cable/yellow{
-	d1 = 1;
-	d2 = 4;
-	icon_state = "1-4"
-	},
-/obj/structure/lattice/catwalk,
-/turf/simulated/floor/plating,
-/area/space/nearstation)
 "kw" = (
 /obj/machinery/atmospherics/unary/vent_pump{
 	dir = 8
@@ -4478,10 +4411,7 @@
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
 "kA" = (
-/obj/machinery/computer{
-	desc = "A computer long since rendered non-functional due to lack of maintenance. Spitting out error messages.";
-	name = "Broken Computer"
-	},
+/obj/machinery/computer/nonfunctional,
 /obj/effect/decal/cleanable/dirt,
 /turf/simulated/floor/plasteel/white,
 /area/ruin/ancientstation/proto)
@@ -4505,7 +4435,7 @@
 /turf/simulated/floor/engine,
 /area/ruin/ancientstation/atmo)
 "kE" = (
-/obj/effect/spawner/window/reinforced,
+/obj/effect/spawner/window/reinforced/grilled,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/proto)
 "kF" = (
@@ -4516,7 +4446,7 @@
 	dir = 1
 	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/arrow{
+/obj/effect/turf_decal/arrows/black{
 	dir = 1
 	},
 /turf/simulated/floor/plasteel,
@@ -4532,25 +4462,37 @@
 /turf/simulated/mineral/random/high_chance,
 /area/ruin/unpowered)
 "kI" = (
-/obj/effect/decal/warning_stripes/southeast,
-/obj/effect/decal/warning_stripes/northwest,
+/obj/effect/turf_decal/stripes/line{
+	dir = 6
+	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 9
+	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/mob_spawn/human/oldsec,
+/obj/effect/mob_spawn/human/alive/old/sec,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "kJ" = (
-/obj/effect/decal/warning_stripes/southeast,
-/obj/effect/decal/warning_stripes/northwest,
+/obj/effect/turf_decal/stripes/line{
+	dir = 6
+	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 9
+	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/mob_spawn/human/oldsci,
+/obj/effect/mob_spawn/human/alive/old/sci,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "kK" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply,
-/obj/effect/decal/warning_stripes/southeast,
-/obj/effect/decal/warning_stripes/northwest,
+/obj/effect/turf_decal/stripes/line{
+	dir = 6
+	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 9
+	},
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/mob_spawn/human/oldeng,
+/obj/effect/mob_spawn/human/alive/old/eng,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation)
 "kL" = (
@@ -4649,10 +4591,6 @@
 /obj/structure/particle_accelerator/power_box,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/thetacorridor)
-"kZ" = (
-/obj/structure/lattice/catwalk,
-/turf/simulated/floor/plating,
-/area/space/nearstation)
 "la" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
@@ -5067,7 +5005,7 @@
 "lO" = (
 /obj/structure/transit_tube/station/reverse,
 /obj/effect/decal/cleanable/dirt,
-/obj/effect/decal/warning_stripes/arrow,
+/obj/effect/turf_decal/arrows/black,
 /turf/simulated/floor/plasteel,
 /area/ruin/ancientstation/thetacorridor)
 "rN" = (
@@ -5079,6 +5017,10 @@
 /obj/structure/lattice,
 /turf/template_noop,
 /area/space/nearstation)
+"AP" = (
+/obj/effect/spawner/window/reinforced/grilled,
+/turf/simulated/floor/plating,
+/area/ruin/ancientstation)
 "AY" = (
 /obj/machinery/recharge_station,
 /obj/effect/decal/cleanable/dirt,
@@ -5089,6 +5031,16 @@
 /obj/machinery/power/tesla_coil,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/thetacorridor)
+"Db" = (
+/obj/structure/transit_tube/crossing,
+/turf/template_noop,
+/area/space/nearstation)
+"Lu" = (
+/obj/structure/transit_tube/horizontal{
+	dir = 4
+	},
+/turf/template_noop,
+/area/space/nearstation)
 "LD" = (
 /obj/machinery/light/small{
 	dir = 4
@@ -5100,6 +5052,14 @@
 /obj/machinery/door/airlock/maintenance_hatch,
 /turf/simulated/floor/plating,
 /area/ruin/ancientstation/thetacorridor)
+"TF" = (
+/obj/effect/spawner/window/reinforced/grilled,
+/turf/simulated/floor/plating/airless,
+/area/ruin/ancientstation/betanorth)
+"VT" = (
+/obj/structure/transit_tube/horizontal,
+/turf/template_noop,
+/area/space/nearstation)
 "Xq" = (
 /mob/living/simple_animal/hostile/hivebot,
 /obj/effect/decal/cleanable/dirt,
@@ -5417,7 +5377,7 @@ bf
 bf
 bf
 bz
-ft
+fs
 bz
 bf
 aW
@@ -5552,9 +5512,9 @@ aa
 aa
 aa
 bf
-bz
+TF
 bW
-bz
+TF
 bf
 uQ
 uQ
@@ -5601,7 +5561,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aH
 bf
 aW
@@ -5649,7 +5609,7 @@ aa
 uQ
 aa
 aa
-cX
+VT
 aa
 aa
 uQ
@@ -5697,7 +5657,7 @@ aa
 aa
 aa
 aa
-de
+VT
 aa
 aa
 uQ
@@ -5745,7 +5705,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 ae
@@ -5793,7 +5753,7 @@ aa
 aa
 aa
 aa
-cX
+Lu
 aa
 uQ
 ck
@@ -5802,15 +5762,15 @@ hf
 ck
 ck
 hs
-iO
-iO
-iP
-kZ
-kv
-kZ
-iO
-kZ
-iP
+hf
+hf
+jw
+ck
+kl
+ck
+hf
+ck
+jw
 uQ
 aa
 aa
@@ -5841,7 +5801,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 ae
@@ -5889,7 +5849,7 @@ aa
 aa
 aa
 aa
-cX
+de
 aa
 uQ
 ck
@@ -5937,7 +5897,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 ae
@@ -5985,7 +5945,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 uQ
 eK
@@ -6033,7 +5993,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 dp
@@ -6081,7 +6041,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 uQ
@@ -6129,7 +6089,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 uQ
@@ -6177,7 +6137,7 @@ aa
 aa
 aa
 aa
-de
+VT
 aa
 aa
 cU
@@ -6225,7 +6185,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 cU
@@ -6273,7 +6233,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 cU
 cU
@@ -6320,9 +6280,9 @@ aa
 aa
 aa
 az
-bA
+AP
 bX
-bA
+AP
 cU
 eJ
 dN
@@ -6779,7 +6739,7 @@ kJ
 bC
 jP
 bC
-bA
+AP
 aa
 aa
 aa
@@ -6875,7 +6835,7 @@ kK
 dV
 jQ
 kG
-bA
+AP
 aa
 aa
 aa
@@ -6971,7 +6931,7 @@ jP
 bC
 jP
 bC
-bA
+AP
 aa
 aa
 aa
@@ -7376,9 +7336,9 @@ aa
 aa
 aa
 az
-bA
+AP
 bX
-bA
+AP
 dg
 el
 eI
@@ -7392,9 +7352,9 @@ eQ
 lG
 lM
 dg
-bA
+AP
 bX
-bA
+AP
 az
 aa
 aa
@@ -7425,7 +7385,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 dg
 dA
@@ -7441,7 +7401,7 @@ lH
 dg
 dg
 aa
-cX
+VT
 aa
 aa
 aa
@@ -7472,7 +7432,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 aa
@@ -7489,7 +7449,7 @@ lI
 dg
 aa
 aa
-cX
+VT
 aa
 aa
 aa
@@ -7522,7 +7482,7 @@ aa
 aa
 aa
 dk
-cX
+Db
 aa
 dg
 dg
@@ -7537,7 +7497,7 @@ dg
 dg
 aa
 aa
-cX
+VT
 aa
 aa
 aa
@@ -7621,7 +7581,7 @@ aa
 aa
 aa
 aa
-dn
+VT
 aa
 aa
 uQ
@@ -7633,7 +7593,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 aa
@@ -7665,7 +7625,7 @@ aa
 aa
 aa
 aa
-dn
+aa
 aa
 aa
 ab
@@ -7681,7 +7641,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 aa
@@ -7713,7 +7673,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 ab
@@ -7729,7 +7689,7 @@ aa
 aa
 aa
 aa
-cX
+VT
 aa
 aa
 aa

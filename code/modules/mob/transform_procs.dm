@@ -37,6 +37,8 @@
 
 	O.rename_self("AI", TRUE)
 
+	O.blurb_it()
+
 	INVOKE_ASYNC(GLOBAL_PROC, GLOBAL_PROC_REF(qdel), src) // To prevent the proc from returning null. Todo: Convert to QDEL_IN
 	return O
 
@@ -269,7 +271,7 @@
 	if(stat == DEAD)
 		return
 
-	for(var/obj/item/W in src)
+	for(var/obj/item/W in get_all_slots())
 		unEquip(W)
 
 	regenerate_icons()

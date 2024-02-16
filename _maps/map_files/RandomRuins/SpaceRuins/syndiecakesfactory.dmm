@@ -16,7 +16,7 @@
 /area/ruin/space/unpowered)
 "bk" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
 /obj/effect/decal/cleanable/dirt,
@@ -111,11 +111,11 @@
 /obj/machinery/computer/security/telescreen/entertainment{
 	pixel_y = -32
 	},
-/obj/item/reagent_containers/food/snacks/donut/sprinkles{
+/obj/item/food/snacks/donut/sprinkles{
 	pixel_y = 8;
 	pixel_x = -9
 	},
-/obj/item/reagent_containers/food/snacks/donut/sprinkles{
+/obj/item/food/snacks/donut/sprinkles{
 	pixel_y = -1;
 	pixel_x = 5
 	},
@@ -123,8 +123,8 @@
 /area/ruin/space/unpowered)
 "fq" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/meat/corgi,
-/obj/item/reagent_containers/food/snacks/meat/corgi{
+/obj/item/food/snacks/meat/corgi,
+/obj/item/food/snacks/meat/corgi{
 	pixel_y = 6
 	},
 /turf/simulated/floor/plasteel{
@@ -133,14 +133,14 @@
 /area/ruin/space/unpowered)
 "fs" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15;
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = -10
 	},
 /obj/machinery/light/small{
@@ -152,7 +152,7 @@
 /area/ruin/space/unpowered)
 "fE" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake,
+/obj/item/food/snacks/syndicake,
 /turf/simulated/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -223,7 +223,7 @@
 /area/ruin/space/unpowered)
 "hF" = (
 /obj/effect/landmark/damageturf,
-/turf/simulated/floor/engine,
+/turf/simulated/floor/engine/airless,
 /area/ruin/space/unpowered)
 "hH" = (
 /obj/structure/railing/corner,
@@ -275,11 +275,11 @@
 /area/ruin/space/unpowered)
 "ke" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15;
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake,
+/obj/item/food/snacks/syndicake,
 /turf/simulated/floor/plasteel{
 	icon_state = "dark"
 	},
@@ -298,7 +298,7 @@
 /area/ruin/space/unpowered)
 "ls" = (
 /obj/structure/dispenser/oxygen,
-/turf/simulated/floor/engine,
+/turf/simulated/floor/engine/airless,
 /area/ruin/space/unpowered)
 "lZ" = (
 /turf/simulated/floor/plating/airless,
@@ -369,11 +369,11 @@
 /area/ruin/space/unpowered)
 "qd" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/breadslice,
-/obj/item/reagent_containers/food/snacks/breadslice{
+/obj/item/food/snacks/breadslice,
+/obj/item/food/snacks/breadslice{
 	pixel_y = 4
 	},
-/obj/item/reagent_containers/food/snacks/breadslice{
+/obj/item/food/snacks/breadslice{
 	pixel_y = 8
 	},
 /obj/machinery/light/small{
@@ -480,12 +480,12 @@
 /area/ruin/space/unpowered)
 "tf" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake,
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15;
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15
 	},
 /turf/simulated/floor/plasteel{
@@ -630,7 +630,7 @@
 /area/ruin/space/unpowered)
 "xy" = (
 /obj/machinery/suit_storage_unit,
-/turf/simulated/floor/engine,
+/turf/simulated/floor/engine/airless,
 /area/ruin/space/unpowered)
 "xO" = (
 /turf/simulated/floor/plasteel{
@@ -675,7 +675,7 @@
 /turf/simulated/floor/engine,
 /area/ruin/space/unpowered)
 "zt" = (
-/turf/simulated/floor/plating/damaged,
+/turf/simulated/floor/plating/damaged/airless,
 /area/ruin/space/unpowered)
 "AP" = (
 /obj/structure/table/reinforced,
@@ -692,10 +692,10 @@
 /area/ruin/space/unpowered)
 "Bh" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = -10
 	},
 /turf/simulated/floor/plasteel{
@@ -747,7 +747,7 @@
 /area/ruin/space/unpowered)
 "Do" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/meat/corgi,
+/obj/item/food/snacks/meat/corgi,
 /turf/simulated/floor/plasteel{
 	icon_state = "cafeteria"
 	},
@@ -770,11 +770,11 @@
 /area/ruin/space/unpowered)
 "DY" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/condiment/milk{
+/obj/item/reagent_containers/condiment/milk{
 	pixel_y = 5;
 	pixel_x = 6
 	},
-/obj/item/reagent_containers/food/condiment/milk{
+/obj/item/reagent_containers/condiment/milk{
 	pixel_y = 5;
 	pixel_x = -5
 	},
@@ -831,8 +831,8 @@
 /area/ruin/space/unpowered)
 "Gn" = (
 /obj/structure/table/reinforced,
-/obj/item/reagent_containers/food/snacks/syndicake,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake,
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
 /turf/simulated/floor/engine,
@@ -876,7 +876,7 @@
 /turf/simulated/floor/engine,
 /area/ruin/space/unpowered)
 "Iz" = (
-/obj/item/reagent_containers/food/snacks/meat/corgi{
+/obj/item/food/snacks/meat/corgi{
 	pixel_y = 6
 	},
 /obj/effect/decal/cleanable/dirt,
@@ -946,15 +946,18 @@
 /area/ruin/space/unpowered)
 "Lt" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15
 	},
 /turf/simulated/floor/plasteel{
 	icon_state = "dark"
 	},
+/area/ruin/space/unpowered)
+"LN" = (
+/turf/simulated/floor/engine/airless,
 /area/ruin/space/unpowered)
 "LV" = (
 /obj/structure/chair/comfy/black{
@@ -973,8 +976,8 @@
 /area/ruin/space/unpowered)
 "Mw" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake,
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15;
 	pixel_y = 7
 	},
@@ -999,10 +1002,10 @@
 /area/ruin/space/unpowered)
 "MY" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15
 	},
 /turf/simulated/floor/plasteel{
@@ -1031,21 +1034,21 @@
 /area/template_noop)
 "Ov" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/donkpocket{
+/obj/item/food/snacks/donkpocket{
 	pixel_x = 8
 	},
-/obj/item/reagent_containers/food/snacks/donkpocket{
+/obj/item/food/snacks/donkpocket{
 	pixel_x = -8
 	},
-/obj/item/reagent_containers/food/snacks/donkpocket{
+/obj/item/food/snacks/donkpocket{
 	pixel_x = -8;
 	pixel_y = 8
 	},
-/obj/item/reagent_containers/food/snacks/donkpocket{
+/obj/item/food/snacks/donkpocket{
 	pixel_x = 8;
 	pixel_y = 8
 	},
-/obj/item/reagent_containers/food/snacks/birthdaycakeslice,
+/obj/item/food/snacks/birthdaycakeslice,
 /turf/simulated/floor/plasteel{
 	icon_state = "floorgrime"
 	},
@@ -1068,7 +1071,7 @@
 /obj/item/flag/syndi{
 	anchored = 1
 	},
-/turf/simulated/floor/engine,
+/turf/simulated/floor/engine/airless,
 /area/ruin/space/unpowered)
 "OU" = (
 /mob/living/simple_animal/hostile/alien/sentinel{
@@ -1112,12 +1115,12 @@
 /area/ruin/space/unpowered)
 "QF" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake,
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15;
 	pixel_y = 7
 	},
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_x = 15
 	},
 /obj/machinery/light/small{
@@ -1158,7 +1161,7 @@
 	},
 /area/ruin/space/unpowered)
 "SS" = (
-/obj/item/reagent_containers/food/snacks/meat/corgi,
+/obj/item/food/snacks/meat/corgi,
 /turf/simulated/floor/grass,
 /area/ruin/space/unpowered)
 "TG" = (
@@ -1190,8 +1193,8 @@
 /area/ruin/space/unpowered)
 "Vt" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/condiment/saltshaker,
-/obj/item/reagent_containers/food/condiment/peppermill{
+/obj/item/reagent_containers/condiment/saltshaker,
+/obj/item/reagent_containers/condiment/peppermill{
 	pixel_y = 12
 	},
 /turf/simulated/floor/plasteel{
@@ -1199,7 +1202,7 @@
 	},
 /area/ruin/space/unpowered)
 "VI" = (
-/obj/item/reagent_containers/food/snacks/meat/corgi{
+/obj/item/food/snacks/meat/corgi{
 	pixel_y = 6
 	},
 /turf/simulated/floor/plasteel{
@@ -1234,7 +1237,7 @@
 /area/ruin/space/unpowered)
 "XZ" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/condiment/enzyme{
+/obj/item/reagent_containers/condiment/enzyme{
 	pixel_y = 10;
 	pixel_x = 5
 	},
@@ -1255,9 +1258,7 @@
 /turf/simulated/floor/engine,
 /area/ruin/space/unpowered)
 "YE" = (
-/obj/item/kirbyplants{
-	icon_state = "plant-22"
-	},
+/obj/item/kirbyplants/plant22,
 /turf/simulated/floor/grass,
 /area/ruin/space/unpowered)
 "YQ" = (
@@ -1287,14 +1288,14 @@
 /turf/simulated/floor/grass,
 /area/ruin/space/unpowered)
 "Zs" = (
-/obj/item/reagent_containers/food/condiment/flour,
+/obj/item/reagent_containers/condiment/flour,
 /turf/simulated/floor/plasteel{
 	icon_state = "cafeteria"
 	},
 /area/ruin/space/unpowered)
 "Zw" = (
 /obj/structure/table/glass/reinforced/plastitanium,
-/obj/item/reagent_containers/food/snacks/syndicake{
+/obj/item/food/snacks/syndicake{
 	pixel_y = 7
 	},
 /turf/simulated/floor/plasteel{
@@ -2102,9 +2103,9 @@ xO
 yU
 wV
 EJ
-sh
-sh
-sh
+LN
+LN
+LN
 lZ
 lZ
 NQ
@@ -2144,9 +2145,9 @@ xO
 xO
 xO
 vR
-sh
+LN
 hF
-sh
+LN
 hF
 zt
 Hy
@@ -2186,11 +2187,11 @@ xO
 xO
 Jt
 EJ
-sh
-sh
-sh
-sh
-sh
+LN
+LN
+LN
+LN
+LN
 EJ
 EJ
 EJ
@@ -2229,10 +2230,10 @@ ub
 EJ
 EJ
 EJ
-sh
-sh
-sh
-sh
+LN
+LN
+LN
+LN
 oH
 OK
 OK
@@ -2272,8 +2273,8 @@ EJ
 OK
 oH
 OP
-sh
-sh
+LN
+LN
 ls
 EJ
 OK

@@ -48,6 +48,8 @@
 
 #define STATUS_EFFECT_BLOOD_SWELL /datum/status_effect/bloodswell //stun resistance and halved damage for gargantua vampires
 
+#define STATUS_EFFECT_VAMPIRE_GLADIATOR /datum/status_effect/vampire_gladiator // Bonebreak, IB and burn wound immunity for garg vampires and healing.
+
 #define STATUS_EFFECT_BLOOD_RUSH /datum/status_effect/blood_rush // speed boost for gargantua vampires
 
 #define STATUS_EFFECT_CHAINSAW_SLAYING /datum/status_effect/chainsaw_slaying // Stun immunity, very slight damage resistance
@@ -57,6 +59,8 @@
 #define STATUS_EFFECT_DRILL_PAYBACK /datum/status_effect/drill_payback // Slight antistun and healing, along with visual effect. Works only in range of the vault, and for 30 seconds after it ends.
 
 #define STATUS_EFFECT_REVOLUTION_PROTECT /datum/status_effect/rev_protection
+
+#define STATUS_EFFECT_BEARSERKER_RAGE /datum/status_effect/bearserker_rage
 
 /////////////
 // DEBUFFS //
@@ -99,6 +103,15 @@
 #define STATUS_EFFECT_CLINGTENTACLE /datum/status_effect/cling_tentacle //Imobilises target for 3 seconds
 
 #define STATUS_EFFECT_CRYO_BEAM /datum/status_effect/cryo_beam //Chills target, freezes reagents in their blood, breaks if sight is lost.
+
+#define STATUS_EFFECT_BUBBLEGUM_CURSE /datum/status_effect/bubblegum_curse //Bleeding. Damage over time. Fog. And, of course, a suprise for people that try to run away.
+
+#define STATUS_BOOKWYRM /datum/status_effect/bookwyrm
+
+#define STATUS_EFFECT_ABDUCTOR_COOLDOWN /datum/status_effect/abductor_cooldown //warning status, prevents abductor from being recalled for 10 seconds
+
+#define STATUS_EFFECT_MAGIC_DISGUISE /datum/status_effect/magic_disguise
+
 
 //#define STATUS_EFFECT_NECROPOLIS_CURSE /datum/status_effect/necropolis_curse
 //#define CURSE_BLINDING	1 //makes the edges of the target's screen obscured
@@ -173,6 +186,16 @@
 #define STATUS_EFFECT_FAKE_VIRUS /datum/status_effect/fake_virus
 /// This status effect lets the user see the lwap dots.
 #define STATUS_EFFECT_LWAPSCOPE /datum/status_effect/lwap_scope
+/// This status effect allows a mob to be revived with a defibrillator.
+#define STATUS_EFFECT_REVIVABLE /datum/status_effect/limited_bonus/revivable
+/// Causes a random safe teleport every 2 seconds for a limited time
+#define STATUS_EFFECT_TELEPORT_ROULETTE /datum/status_effect/teleport_roulette
+
+/// Status effects for different actions
+#define STATUS_EFFECT_REMOVE_CUFFS /datum/status_effect/action_status_effect/remove_handcuffs
+#define STATUS_EFFECT_BREAK_CUFFS /datum/status_effect/action_status_effect/break_handcuffs
+#define STATUS_EFFECT_REMOVE_MUZZLE /datum/status_effect/action_status_effect/remove_muzzle
+#define STATUS_EFFECT_UNBUCKLE /datum/status_effect/action_status_effect/unbuckle
 
 //////////////////////////
 // Mind batter variants //

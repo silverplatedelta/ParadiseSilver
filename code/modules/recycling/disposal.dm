@@ -271,10 +271,13 @@
 		update()
 	return
 
-/obj/machinery/disposal/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = FALSE, datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+/obj/machinery/disposal/ui_state(mob/user)
+	return GLOB.default_state
+
+/obj/machinery/disposal/ui_interact(mob/user, datum/tgui/ui = null)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, ui_key, "DisposalBin", name, 300, 250, master_ui, state)
+		ui = new(user, src, "DisposalBin", name)
 		ui.open()
 
 
@@ -400,8 +403,8 @@
 		return
 
 	flush_count++
-	if( flush_count >= flush_every_ticks )
-		if( contents.len )
+	if(flush_count >= flush_every_ticks)
+		if(contents.len)
 			if(mode == 2)
 				spawn(0)
 					flush()
@@ -409,7 +412,7 @@
 
 	src.updateDialog()
 
-	if(flush && air_contents.return_pressure() >= SEND_PRESSURE )	// flush can happen even without power
+	if(flush && air_contents.return_pressure() >= SEND_PRESSURE)	// flush can happen even without power
 		flush()
 
 	if(stat & NOPOWER)			// won't charge if no power
@@ -524,7 +527,7 @@
 		var/obj/item/I = mover
 		if(istype(I, /obj/item/projectile))
 			return
-		if(prob(75))
+		if(prob(75) || (istype(mover.throwing.thrower) && HAS_TRAIT(mover.throwing.thrower, TRAIT_BADASS)))
 			I.forceMove(src)
 			for(var/mob/M in viewers(src))
 				M.show_message("\the [I] lands in \the [src].", 3)
@@ -561,7 +564,7 @@
 	var/active = FALSE	// true if the holder is moving, otherwise inactive
 	dir = 0
 	var/count = 1000	//*** can travel 1000 steps before going inactive (in case of loops)
-	var/has_fat_guy = 0	// true if contains a fat person
+	var/has_fat_guy = FALSE	// true if contains a fat person
 	/// Destination the holder is set to, defaulting to disposals and changes if the contents have a mail/sort tag.
 	var/destinationTag = 1
 	var/tomail = 0 //changes if contains wrapped package
@@ -598,7 +601,7 @@
 		if(ishuman(AM))
 			var/mob/living/carbon/human/H = AM
 			if(HAS_TRAIT(H, TRAIT_FAT))		// is a human and fat?
-				has_fat_guy = 1			// set flag on holder
+				has_fat_guy = TRUE			// set flag on holder
 		if(istype(AM, /obj/structure/bigDelivery) && !hasmob)
 			var/obj/structure/bigDelivery/T = AM
 			destinationTag = T.sortTag
@@ -646,7 +649,8 @@
 			active = FALSE
 			// find the fat guys
 			for(var/mob/living/carbon/human/H in src)
-
+				if(HAS_TRAIT(H, TRAIT_FAT))
+					to_chat(H, "<span class='userdanger'>You suddenly stop in [last], your extra weight jamming you against the walls!</span>")
 			break
 		sleep(1)		// was 1
 		var/obj/structure/disposalpipe/curr = loc
@@ -688,7 +692,7 @@
 			M.reset_perspective(src)	// if a client mob, update eye to follow this holder
 
 	if(other.has_fat_guy)
-		has_fat_guy = 1
+		has_fat_guy = TRUE
 	qdel(other)
 
 
@@ -795,7 +799,10 @@
 
 		H.forceMove(P)
 	else			// if wasn't a pipe, then set loc to turf
-		H.forceMove(T)
+		if(is_blocked_turf(T))
+			H.forceMove(loc)
+		else
+			H.forceMove(T)
 		return null
 
 	return P
@@ -1439,9 +1446,9 @@
 /obj/structure/disposaloutlet/screwdriver_act(mob/living/user, obj/item/I)
 	add_fingerprint(user)
 
-	if(mode == FALSE)
+	if(!mode)
 		to_chat(user, "<span class='notice'>You remove the screws around the power connection.</span>")
-	else if(mode == TRUE)
+	else if(mode)
 		to_chat(user, "<span class='notice'>You attach the screws around the power connection.</span>")
 	I.play_tool_sound(src)
 	mode = !mode

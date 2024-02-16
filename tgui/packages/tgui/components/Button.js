@@ -1,8 +1,12 @@
+/**
+ * @file
+ * @copyright 2020 Aleksej Komarov
+ * @license MIT
+ */
+
 import { classes, pureComponentHooks } from 'common/react';
 import { Component, createRef } from 'inferno';
-import { IS_IE8 } from '../byond';
-import { KEY_ENTER, KEY_ESCAPE, KEY_SPACE } from '../hotkeys';
-import { refocusLayout } from '../layouts';
+import { KEY_ENTER, KEY_ESCAPE, KEY_SPACE } from 'common/keycodes';
 import { createLogger } from '../logging';
 import { Box } from './Box';
 import { Icon } from './Icon';
@@ -15,20 +19,25 @@ export const Button = (props) => {
     className,
     fluid,
     icon,
+    iconRotation,
+    iconSpin,
     color,
+    textColor,
     disabled,
     selected,
     tooltip,
     tooltipPosition,
     ellipsis,
+    compact,
+    circular,
     content,
-    iconRotation,
     iconColor,
-    iconSpin,
     iconRight,
+    iconStyle,
     children,
     onclick,
     onClick,
+    multiLine,
     ...rest
   } = props;
   const hasContent = !!(content || children);
@@ -41,9 +50,16 @@ export const Button = (props) => {
         `https://infernojs.org/docs/guides/event-handling`
     );
   }
-  // IE8: Use a lowercase "onclick" because synthetic events are fucked.
-  // IE8: Use an "unselectable" prop because "user-select" doesn't work.
-  return (
+  rest.onClick = (e) => {
+    if (!disabled && onClick) {
+      onClick(e);
+    }
+  };
+  // IE8: Use "unselectable" because "user-select" doesn't work.
+  if (Byond.IS_LTE_IE8) {
+    rest.unselectable = true;
+  }
+  let buttonContent = (
     <Box
       className={classes([
         'Button',
@@ -52,20 +68,17 @@ export const Button = (props) => {
         selected && 'Button--selected',
         hasContent && 'Button--hasContent',
         ellipsis && 'Button--ellipsis',
+        circular && 'Button--circular',
+        compact && 'Button--compact',
         iconRight && 'Button--iconRight',
+        multiLine && 'Button--multiLine',
         color && typeof color === 'string'
           ? 'Button--color--' + color
           : 'Button--color--default',
         className,
       ])}
       tabIndex={!disabled && '0'}
-      unselectable={IS_IE8}
-      onclick={(e) => {
-        refocusLayout();
-        if (!disabled && onClick) {
-          onClick(e);
-        }
-      }}
+      color={textColor}
       onKeyDown={(e) => {
         const keyCode = window.event ? e.which : e.keyCode;
         // Simulate a click when pressing space or enter.
@@ -79,7 +92,6 @@ export const Button = (props) => {
         // Refocus layout on pressing escape.
         if (keyCode === KEY_ESCAPE) {
           e.preventDefault();
-          refocusLayout();
           return;
         }
       }}
@@ -91,6 +103,7 @@ export const Button = (props) => {
           color={iconColor}
           rotation={iconRotation}
           spin={iconSpin}
+          style={iconStyle}
         />
       )}
       {content}
@@ -101,11 +114,21 @@ export const Button = (props) => {
           color={iconColor}
           rotation={iconRotation}
           spin={iconSpin}
+          style={iconStyle}
         />
       )}
-      {tooltip && <Tooltip content={tooltip} position={tooltipPosition} />}
     </Box>
   );
+
+  if (tooltip) {
+    buttonContent = (
+      <Tooltip content={tooltip} position={tooltipPosition}>
+        {buttonContent}
+      </Tooltip>
+    );
+  }
+
+  return buttonContent;
 };
 
 Button.defaultHooks = pureComponentHooks;
@@ -185,6 +208,10 @@ export class ButtonInput extends Component {
   }
 
   setInInput(inInput) {
+    const { disabled } = this.props;
+    if (disabled) {
+      return;
+    }
     this.setState({
       inInput,
     });
@@ -226,17 +253,21 @@ export class ButtonInput extends Component {
       tooltip,
       tooltipPosition,
       color = 'default',
+      disabled,
       placeholder,
       maxLength,
+      multiLine,
       ...rest
     } = this.props;
 
-    return (
+    let buttonContent = (
       <Box
         className={classes([
           'Button',
           fluid && 'Button--fluid',
+          disabled && 'Button--disabled',
           'Button--color--' + color,
+          multiLine + 'Button--multiLine',
         ])}
         {...rest}
         onClick={() => this.setInInput(true)}
@@ -268,9 +299,18 @@ export class ButtonInput extends Component {
             }
           }}
         />
-        {tooltip && <Tooltip content={tooltip} position={tooltipPosition} />}
       </Box>
     );
+
+    if (tooltip) {
+      buttonContent = (
+        <Tooltip content={tooltip} position={tooltipPosition}>
+          {buttonContent}
+        </Tooltip>
+      );
+    }
+
+    return buttonContent;
   }
 }
 

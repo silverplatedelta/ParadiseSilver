@@ -3,9 +3,6 @@
 	. += ..()
 	. += GLOB.configuration.movement.human_delay
 	. += dna.species.movement_delay(src)
-	if(isobj(pulling) && has_gravity(pulling))
-		var/obj/pulled = pulling
-		. += pulled.pull_speed
 
 /mob/living/carbon/human/Process_Spacemove(movement_dir = 0)
 
@@ -36,7 +33,7 @@
 			. = 1
 
 /mob/living/carbon/human/mob_negates_gravity()
-	return shoes && shoes.negates_gravity()
+	return HAS_TRAIT(src, TRAIT_MAGPULSE)
 
 /mob/living/carbon/human/Move(NewLoc, direct)
 	. = ..()

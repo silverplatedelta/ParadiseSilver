@@ -1,20 +1,17 @@
 import { useBackend } from '../backend';
-import { Button, Flex, Section, Divider } from '../components';
+import { Button, Stack, Section, Divider } from '../components';
 import { Window } from '../layouts';
 
 export const SpecMenu = (props, context) => {
   return (
-    <Window resizable theme="nologo">
+    <Window width={1100} height={600} theme="nologo">
       <Window.Content>
-        <Flex justify="space-around">
+        <Stack fill>
           <HemoMenu />
-          <Divider vertical={1} />
           <UmbrMenu />
-          <Divider vertical={1} />
           <GarMenu />
-          <Divider vertical={1} />
           <DantMenu />
-        </Flex>
+        </Stack>
       </Window.Content>
     </Window>
   );
@@ -24,14 +21,20 @@ const HemoMenu = (props, context) => {
   const { act, data } = useBackend(context);
   const { subclasses } = data;
   return (
-    <Flex.Item grow={1} basis="25%">
-      <Section title="Hemomancer">
+    <Stack.Item grow basis="25%">
+      <Section
+        fill
+        scrollable
+        title="Hemomancer"
+        buttons={<Button content="Choose" onClick={() => act('hemomancer')} />}
+      >
         <h3>
           Focuses on blood magic and the manipulation of blood around you.
         </h3>
         <p>
           <b>Vampiric claws</b>: Unlocked at 150 blood, allows you to summon a
-          robust pair of claws that attack rapidly, drain a targets blood, and heal you.
+          robust pair of claws that attack rapidly, drain a targets blood, and
+          heal you.
         </p>
         <p>
           <b>Blood Barrier</b>: Unlocked at 250 blood, allows you to select two
@@ -63,9 +66,8 @@ const HemoMenu = (props, context) => {
           the blood of everyone who is nearby and use it to heal yourself
           slightly and remove any incapacitating effects rapidly.
         </p>
-        <Button content="Hemomancer" onClick={() => act('hemomancer')} />
       </Section>
-    </Flex.Item>
+    </Stack.Item>
   );
 };
 
@@ -73,8 +75,13 @@ const UmbrMenu = (props, context) => {
   const { act, data } = useBackend(context);
   const { subclasses } = data;
   return (
-    <Flex.Item grow={1} basis="25%">
-      <Section title="Umbrae">
+    <Stack.Item grow basis="25%">
+      <Section
+        fill
+        scrollable
+        title="Umbrae"
+        buttons={<Button content="Choose" onClick={() => act('umbrae')} />}
+      >
         <h3>Focuses on darkness, stealth ambushing and mobility.</h3>
         <p>
           <b>Cloak of darkness</b>: Unlocked at 150 blood, when toggled, allows
@@ -82,16 +89,16 @@ const UmbrMenu = (props, context) => {
           While active, burn damage is more effective against you.
         </p>
         <p>
-        <b>Shadow anchor</b>: Unlocked at 250 blood, casting it will create
-          an anchor at the cast location after a short delay.
-          If you then cast the ability again, you are teleported back to the anchor.
-          If you do not cast again within 2 minutes, you will do a fake recall,
-          causing a clone to appear at the anchor and making yourself invisible.
-          It will not teleport you between Z levels.
+          <b>Shadow anchor</b>: Unlocked at 250 blood, casting it will create an
+          anchor at the cast location after a short delay. If you then cast the
+          ability again, you are teleported back to the anchor. If you do not
+          cast again within 2 minutes, you will do a fake recall, causing a
+          clone to appear at the anchor and making yourself invisible. It will
+          not teleport you between Z levels.
         </p>
         <p>
           <b>Shadow snare</b>: Unlocked at 250 blood, allows you to summon a
-          trap that when crossed blinds and ensares the victim. This trap is
+          trap that when crossed blinds and ensnares the victim. This trap is
           hard to see, but withers in the light.
         </p>
         <p>
@@ -102,8 +109,8 @@ const UmbrMenu = (props, context) => {
           <b>Extinguish</b>: Unlocked at 600 blood, allows you to snuff out
           nearby electronic light sources and glowshrooms.
         </p>
-          <b>Shadow boxing</b>: Unlocked at 800 blood, sends out shadow
-          clones towards a target, damaging them while you remain in range.
+        <b>Shadow boxing</b>: Unlocked at 800 blood, sends out shadow clones
+        towards a target, damaging them while you remain in range.
         <p>
           <b>Full power</b>
           <Divider />
@@ -112,10 +119,9 @@ const UmbrMenu = (props, context) => {
           Inside the radius, nearby creatures will freeze and energy projectiles
           will deal less damage.
         </p>
-        <p>In addition, you also gain permament X-ray vision.</p>
-        <Button content="Umbrae" onClick={() => act('umbrae')} />
+        <p>In addition, you also gain permanent X-ray vision.</p>
       </Section>
-    </Flex.Item>
+    </Stack.Item>
   );
 };
 
@@ -123,8 +129,13 @@ const GarMenu = (props, context) => {
   const { act, data } = useBackend(context);
   const { subclasses } = data;
   return (
-    <Flex.Item grow={1} basis="25%">
-      <Section title="Gargantua">
+    <Stack.Item grow basis="25%">
+      <Section
+        fill
+        scrollable
+        title="Gargantua"
+        buttons={<Button content="Choose" onClick={() => act('gargantua')} />}
+      >
         <h3>Focuses on tenacity and melee damage.</h3>
         <p>
           <b>Rejuvenate</b>: Will heal you at an increased rate based on how
@@ -136,8 +147,8 @@ const GarMenu = (props, context) => {
           active you cannot fire guns.
         </p>
         <p>
-        <b>Seismic stomp</b>: Unlocked at 250 blood, allows you to stomp the ground
-          to send out a shockwave, knocking people back.
+          <b>Seismic stomp</b>: Unlocked at 250 blood, allows you to stomp the
+          ground to send out a shockwave, knocking people back.
         </p>
         <p>
           <b>Blood rush</b>: Unlocked at 250 blood, gives you a short speed
@@ -149,23 +160,28 @@ const GarMenu = (props, context) => {
         </p>
         <p>
           <b>Overwhelming force</b>: Unlocked at 600 blood, when toggled, if you
-          bump into a door that you dont have access to, it will force it open.
-          In addition, you cannot be pushed or pulled while it is active.
+          bump into a door that you do not have access to, it will force it
+          open. In addition, you cannot be pushed or pulled while it is active.
         </p>
         <p>
-        <b>Demonic grasp</b>: Unlocked at 800 blood, allows you to send out a
-          demonic hand to snare someone. If you are on disarm/grab intent you will
-          push/pull the target, respectively.
+          <b>Demonic grasp</b>: Unlocked at 800 blood, allows you to send out a
+          demonic hand to snare someone. If you are on disarm/grab intent you
+          will push/pull the target, respectively.
+        </p>
+        <p>
+          <b>Charge</b>: Unlocked at 800 blood, you gain the ability to charge
+          at a target. Destroying and knocking back pretty much anything you
+          collide with.
         </p>
         <p>
           <b>Full Power</b>
           <Divider />
-          <b>Charge</b>: You gain the ability to charge at a target. Destroying
-          and knocking back pretty much anything you collide with.
+          <b>Desecrated Duel</b>: Leap towards a visible enemy, creating an
+          arena upon landing, infusing you with increased regeneration, and
+          granting you resistance to internal damages.
         </p>
-        <Button content="Gargantua" onClick={() => act('gargantua')} />
       </Section>
-    </Flex.Item>
+    </Stack.Item>
   );
 };
 
@@ -173,8 +189,13 @@ const DantMenu = (props, context) => {
   const { act, data } = useBackend(context);
   const { subclasses } = data;
   return (
-    <Flex.Item grow={1} basis="25%">
-      <Section title="Dantalion">
+    <Stack.Item grow basis="25%">
+      <Section
+        fill
+        scrollable
+        title="Dantalion"
+        buttons={<Button content="Choose" onClick={() => act('dantalion')} />}
+      >
         <h3>Focuses on thralling and illusions.</h3>
         <p>
           <b>Enthrall</b>: Unlocked at 150 blood, Thralls your target to your
@@ -191,8 +212,8 @@ const DantMenu = (props, context) => {
           your thralls, your thralls can talk back in the same way.
         </p>
         <p>
-          <b>Subspace swap</b>: Unlocked at 250 blood, allows you to swap positions
-          with a target.
+          <b>Subspace swap</b>: Unlocked at 250 blood, allows you to swap
+          positions with a target.
         </p>
         <p>
           <b>Pacify</b>: Unlocked at 250 blood, allows you to pacify a target,
@@ -203,22 +224,22 @@ const DantMenu = (props, context) => {
           out an illusion to fool everyone nearby.
         </p>
         <p>
-        <b>Rally thralls</b>: Unlocked at 600 blood, removes all incapacitating effects from nearby thralls.
+          <b>Rally thralls</b>: Unlocked at 600 blood, removes all
+          incapacitating effects from nearby thralls.
         </p>
         <p>
-        <b>Blood bond</b>: Unlocked at 800 blood, when cast, all nearby thralls
-          become linked to you. If anyone in the network takes damage, it is shared
-          equally between everyone in the network. If a thrall goes out of range,
-          they will be removed from the network.
+          <b>Blood bond</b>: Unlocked at 800 blood, when cast, all nearby
+          thralls become linked to you. If anyone in the network takes damage,
+          it is shared equally between everyone in the network. If a thrall goes
+          out of range, they will be removed from the network.
         </p>
         <p>
           <b>Full Power</b>
           <Divider />
-          <b>Mass Hysteria</b>: Casts a powerful illusion that, blinds then make
-          everyone nearby perceive others to looks like random animals.
+          <b>Mass Hysteria</b>: Casts a powerful illusion that blinds and then
+          makes everyone nearby perceive others as random animals.
         </p>
-        <Button content="Dantalion" onClick={() => act('dantalion')} />
       </Section>
-    </Flex.Item>
+    </Stack.Item>
   );
 };

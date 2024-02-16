@@ -1,4 +1,3 @@
-import { Fragment } from 'inferno';
 import { useBackend, useLocalState } from '../backend';
 import {
   Button,
@@ -62,7 +61,7 @@ export const ATM = (props, context) => {
     body = <LoginScreen />;
   }
   return (
-    <Window resizable>
+    <Window width={550} height={650}>
       <Window.Content scrollable>
         <IntroductionAndCard />
         <Section>{body}</Section>
@@ -192,7 +191,7 @@ const DefaultScreen = (props, context) => {
   );
   const { owner_name, money } = data;
   return (
-    <Fragment>
+    <>
       <Section
         title={'Welcome, ' + owner_name}
         buttons={
@@ -247,7 +246,7 @@ const DefaultScreen = (props, context) => {
           />
         </Box>
       </Section>
-    </Fragment>
+    </>
   );
 };
 
@@ -308,7 +307,9 @@ const ViewTransactionLogs = (props, context) => {
           <Table.Row key={t}>
             <Table.Cell>{t.time}</Table.Cell>
             <Table.Cell>{t.purpose}</Table.Cell>
-            <Table.Cell color={t.is_deposit ? 'green' : 'red'}>${t.amount}</Table.Cell>
+            <Table.Cell color={t.is_deposit ? 'green' : 'red'}>
+              ${t.amount}
+            </Table.Cell>
             <Table.Cell>{t.target_name}</Table.Cell>
           </Table.Row>
         ))}

@@ -20,7 +20,7 @@
 	/// The target turf of the teleporter
 	var/turf/target
 
-	/* 	var/area_bypass is for one-time-use teleport cards (such as clown planet coordinates.)
+	/* 	var/area_bypass is for one-time-use teleport cards
 		Setting this to TRUE will set var/obj/item/gps/locked to null after a player enters the portal and will not allow hand-teles to open portals to that location.
 	*/
 	var/area_bypass = FALSE
@@ -61,6 +61,7 @@
 	if(!emagged)
 		emagged = TRUE
 		to_chat(user, "<span class='notice'>The teleporter can now lock on to Syndicate beacons!</span>")
+		return TRUE
 	else
 		ui_interact(user)
 
@@ -71,12 +72,15 @@
 	ui_interact(user)
 
 
-/obj/machinery/computer/teleporter/ui_interact(mob/user, ui_key = "main", datum/tgui/ui = null, force_open = TRUE, datum/tgui/master_ui = null, datum/ui_state/state = GLOB.default_state)
+/obj/machinery/computer/teleporter/ui_state(mob/user)
+	return GLOB.default_state
+
+/obj/machinery/computer/teleporter/ui_interact(mob/user, datum/tgui/ui = null)
 	if(stat & (NOPOWER|BROKEN))
 		return
-	ui = SStgui.try_update_ui(user, src, ui_key, ui, force_open)
+	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, ui_key, "Teleporter", "Teleporter Console", 380, 260)
+		ui = new(user, src, "Teleporter", "Teleporter Console")
 		ui.open()
 
 /obj/machinery/computer/teleporter/ui_data(mob/user)
@@ -212,7 +216,7 @@
 			"y" = T.y,
 			"z" = T.z)
 
-	for(var/obj/item/implant/tracking/I in GLOB.tracked_implants)
+	for(var/obj/item/bio_chip/tracking/I in GLOB.tracked_implants)
 		if(!I.implanted || !ismob(I.loc))
 			continue
 		else
@@ -314,14 +318,17 @@
 */
 /obj/machinery/teleport/proc/blockAI(atom/A)
 	if(isAI(A) || istype(A, /obj/structure/AIcore))
-		visible_message("<span class='warning'>The teleporter rejects the AI unit.</span>")
 		if(isAI(A))
 			var/mob/living/silicon/ai/T = A
+			if(T.allow_teleporter)
+				return FALSE
 			var/list/TPError = list("<span class='warning'>Firmware instructions dictate you must remain on your assigned station!</span>",
 			"<span class='warning'>You cannot interface with this technology and get rejected!</span>",
 			"<span class='warning'>External firewalls prevent you from utilizing this machine!</span>",
 			"<span class='warning'>Your AI core's anti-bluespace failsafes trigger and prevent teleportation!</span>")
 			to_chat(T, "[pick(TPError)]")
+
+		visible_message("<span class='warning'>The teleporter rejects the AI unit.</span>")
 		return TRUE
 	return FALSE
 
@@ -471,7 +478,7 @@
 	var/A = 40
 	for(var/obj/item/stock_parts/matter_bin/M in component_parts)
 		A -= M.rating * 10
-	tele_delay = max(A, 0)
+	tele_delay = max(A, 1) // prevents you from teleporting 50000 times in a single tick
 	update_icon(UPDATE_ICON_STATE)
 
 /obj/machinery/teleport/perma/Crossed(atom/movable/AM, oldloc)
@@ -484,11 +491,10 @@
 	if(target && !recalibrating && !panel_open && !blockAI(AM))
 		do_teleport(AM, target)
 		use_power(5000)
-		if(tele_delay)
-			recalibrating = TRUE
-			update_icon(UPDATE_ICON_STATE | UPDATE_OVERLAYS)
-			update_lighting()
-			addtimer(CALLBACK(src, PROC_REF(CrossedCallback)), tele_delay)
+		recalibrating = TRUE
+		update_icon(UPDATE_ICON_STATE | UPDATE_OVERLAYS)
+		update_lighting()
+		addtimer(CALLBACK(src, PROC_REF(CrossedCallback)), max(tele_delay, 1))
 
 /obj/machinery/teleport/perma/proc/CrossedCallback()
 	recalibrating = FALSE

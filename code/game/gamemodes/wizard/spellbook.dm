@@ -298,10 +298,17 @@
 	category = "Assistance"
 	cost = 1
 
+/datum/spellbook_entry/disguiseself
+	name = "Disguise Self"
+	spell_type = /obj/effect/proc_holder/spell/disguise_self
+	category = "Assistance"
+	cost = 1
+
 /datum/spellbook_entry/noclothes
 	name = "Remove Clothes Requirement"
 	spell_type = /obj/effect/proc_holder/spell/noclothes
 	category = "Assistance"
+	cost = 1
 
 //Rituals
 /datum/spellbook_entry/summon
@@ -390,7 +397,7 @@
 	var/item_path = null
 
 /datum/spellbook_entry/item/Buy(mob/living/carbon/human/user, obj/item/spellbook/book)
-	if(spawn_on_floor == FALSE)
+	if(!spawn_on_floor)
 		user.put_in_hands(new item_path)
 	else
 		new item_path(user.loc)
@@ -468,7 +475,7 @@
 /datum/spellbook_entry/item/everfull_mug
 	name = "Everfull Mug"
 	desc = "A magical mug that can be filled with omnizine at will, though beware of addiction! It can also produce alchohol and other less useful substances."
-	item_path = /obj/item/reagent_containers/food/drinks/everfull
+	item_path = /obj/item/reagent_containers/drinks/everfull
 	cost = 1
 	category = "Artefacts"
 
@@ -549,7 +556,7 @@
 
 /datum/spellbook_entry/item/staffchaos
 	name = "Staff of Chaos"
-	desc = "A caprious tool that can fire all sorts of magic without any rhyme or reason. Using it on people you care about is not recommended."
+	desc = "A curious staff firing bolts of chaotic energy. Any life struck will be the victim of a random effect, usually harming them. No effect on dead targets."
 	item_path = /obj/item/gun/magic/staff/chaos
 	category = "Staves"
 
@@ -561,6 +568,7 @@
 	category = "Summons"
 	limit = 3
 	cost = 1
+	is_ragin_restricted = TRUE
 
 /datum/spellbook_entry/item/hugbottle
 	name = "Bottle of Tickles"
@@ -582,6 +590,7 @@
 	item_path = /obj/item/antag_spawner/slaughter_demon
 	category = "Summons"
 	limit = 3
+	is_ragin_restricted = TRUE
 
 /datum/spellbook_entry/item/shadowbottle
 	name = "Bottle of Shadows"
@@ -599,11 +608,21 @@
 	limit = 3
 	cost = 1 //Needs essence to live. Needs crew to die for essence, doubt xenobio will be making many monkeys. As such, weaker. Also can hardstun the wizard.
 
+/datum/spellbook_entry/item/pulsedemonbottle
+	name = "Living Lightbulb"
+	desc = "A magically sealed lightbulb confining some manner of electricity based creature. Beware, these creatures are indiscriminate in their shocking antics, and you yourself may become a victim."
+	item_path = /obj/item/antag_spawner/pulse_demon
+	category = "Summons"
+	limit = 3
+	cost = 1 // Needs station power to live. Also can kill the wizard trivially in maints (get shock protection).
+
 /datum/spellbook_entry/item/contract
 	name = "Contract of Apprenticeship"
 	desc = "A magical contract binding an apprentice wizard to your service, using it will summon them to your side."
 	item_path = /obj/item/contract
 	category = "Summons"
+	limit = 1
+	is_ragin_restricted = TRUE //We have enough wizards already! Sheesh!
 
 /datum/spellbook_entry/item/tarotdeck
 	name = "Guardian Deck"
@@ -1070,7 +1089,7 @@
 		magichead.voicechange = TRUE	//NEEEEIIGHH
 		if(!user.unEquip(user.wear_mask))
 			qdel(user.wear_mask)
-		user.equip_to_slot_if_possible(magichead, slot_wear_mask, TRUE, TRUE)
+		user.equip_to_slot_if_possible(magichead, SLOT_HUD_WEAR_MASK, TRUE, TRUE)
 		qdel(src)
 	else
 		to_chat(user, "<span class='notice'>I say thee neigh</span>")

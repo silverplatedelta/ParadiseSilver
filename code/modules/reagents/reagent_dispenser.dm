@@ -79,7 +79,6 @@
 	name = "water tank"
 	desc = "A water tank."
 	icon_state = "water"
-	pull_speed = 0
 
 /obj/structure/reagent_dispensers/watertank/high
 	name = "high-capacity water tank"
@@ -94,7 +93,6 @@
 	icon_state = "oil"
 	reagent_id = "oil"
 	tank_volume = 3000
-	pull_speed = 0
 
 /obj/structure/reagent_dispensers/fueltank
 	name = "fuel tank"
@@ -103,7 +101,6 @@
 	reagent_id = "fuel"
 	tank_volume = 4000
 	anchored = TRUE
-	pull_speed = 0
 	var/obj/item/assembly_holder/rig = null
 	var/accepts_rig = 1
 
@@ -259,7 +256,7 @@
 		to_chat(user, "<span class='warning'>There aren't any cups left!</span>")
 		return
 	user.visible_message("<span class='notice'>[user] takes a cup from [src].</span>", "<span class='notice'>You take a paper cup from [src].</span>")
-	var/obj/item/reagent_containers/food/drinks/sillycup/S = new(get_turf(src))
+	var/obj/item/reagent_containers/drinks/sillycup/S = new(get_turf(src))
 	user.put_in_hands(S)
 	paper_cups--
 
@@ -282,7 +279,6 @@
 	icon = 'icons/obj/nuclearbomb.dmi'
 	icon_state = "nuclearbomb0"
 	anchored = TRUE
-	pull_speed = 0
 
 /obj/structure/reagent_dispensers/beerkeg/nuke/update_overlays()
 	. = ..()
