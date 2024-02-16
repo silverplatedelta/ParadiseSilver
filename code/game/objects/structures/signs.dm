@@ -62,12 +62,14 @@
 /obj/item/sign/screwdriver_act(mob/living/user, obj/item/I)
 	if(!isturf(user.loc)) // Why does this use user? This should just be loc.
 		return
-	. = TRUE // These return values gotta be true or we stab the sign
-	var/direction = tgui_input_list(user, "Which direction will this sign be moved?", "Select direction,", list("North", "East", "South", "West", "Cancel"))
-	if(direction == "Cancel" || QDELETED(src))
-		return
 
-	var/obj/structure/sign/S = new(get_turf(user))
+	var/direction = input("In which direction?", "Select direction.") in list("North", "East", "South", "West", "Cancel")
+	if(direction == "Cancel")
+		return TRUE // These gotta be true or we stab the sign
+	if(QDELETED(src))
+		return TRUE // Unsure about this, but stabbing something that doesnt exist seems like a bad idea
+
+	var/obj/structure/sign/S = new(user.loc) //This is really awkward to use user.loc
 	switch(direction)
 		if("North")
 			S.pixel_y = 32
@@ -78,12 +80,13 @@
 		if("West")
 			S.pixel_x = -32
 		else
-			return
+			return TRUE // We dont want to stab it or place it, so we return
 	S.name = name
 	S.desc = desc
 	S.icon_state = sign_state
 	to_chat(user, "<span class='notice'>You fasten [S] with your [I].</span>")
 	qdel(src)
+	return TRUE
 
 /obj/structure/sign/double/map
 	name = "station map"

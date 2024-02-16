@@ -29,12 +29,12 @@
 		if(C!=src && Adjacent(C))
 			choices += C
 
-	var/mob/living/M = tgui_input_list(src, "Who do you wish to feed on?", "Feeding Selection", choices)
+	var/mob/living/M = input(src,"Who do you wish to feed on?") in null|choices
 	if(!M)
-		return FALSE
+		return 0
 	if(CanFeedon(M))
 		Feedon(M)
-		return TRUE
+		return 1
 
 /datum/action/innate/slime/feed
 	name = "Feed"

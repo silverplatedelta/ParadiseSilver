@@ -218,11 +218,7 @@
 	icon_state = "access_helper_sup"
 
 /obj/effect/mapping_helpers/airlock/access/any/supply/general
-	name = "cargo office"
 	access = ACCESS_CARGO
-
-/obj/effect/mapping_helpers/airlock/access/any/supply/cargo_bay
-	access = ACCESS_CARGO_BAY
 
 /obj/effect/mapping_helpers/airlock/access/any/supply/mail_sorting
 	access = ACCESS_MAILSORTING
@@ -437,14 +433,7 @@
 	icon_state = "access_helper_sup"
 
 /obj/effect/mapping_helpers/airlock/access/all/supply/general
-	name = "cargo office"
 	access = ACCESS_CARGO
-
-/obj/effect/mapping_helpers/airlock/access/all/supply/cargo_bay
-	access = ACCESS_CARGO_BAY
-
-/obj/effect/mapping_helpers/airlock/access/all/supply/supply_shuttle
-	access = ACCESS_SUPPLY_SHUTTLE
 
 /obj/effect/mapping_helpers/airlock/access/all/supply/mail_sorting
 	access = ACCESS_MAILSORTING

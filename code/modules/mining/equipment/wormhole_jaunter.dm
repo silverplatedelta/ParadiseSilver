@@ -123,9 +123,7 @@
 			areaindex[tmpname] = 1
 		L[tmpname] = R
 
-	var/desc = tgui_input_list(user, "Please select a location to target.", "Flare Target Interface", L)
-	if(!desc)
-		return
+	var/desc = input("Please select a location to target.", "Flare Target Interface") in L
 	destination = L[desc]
 
 /obj/item/wormhole_jaunter/contractor/attack_self(mob/user) // message is later down

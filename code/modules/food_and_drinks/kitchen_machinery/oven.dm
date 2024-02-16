@@ -23,7 +23,7 @@
 	else
 		var/obj/item/F = I
 		var/obj/item/food/snacks/customizable/C
-		C = tgui_input_list(user, "Select food to make.", "Cooking", food_choices)
+		C = input("Select food to make.", "Cooking", C) in food_choices
 		if(!C)
 			return
 		else

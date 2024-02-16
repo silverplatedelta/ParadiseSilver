@@ -728,7 +728,7 @@
 /turf/simulated/floor/mineral/titanium/blue,
 /area/awaymission/beach)
 "ec" = (
-/obj/machinery/computer/nonfunctional,
+/obj/machinery/computer,
 /turf/simulated/floor/mineral/titanium/blue,
 /area/awaymission/beach)
 "ed" = (

@@ -1,5 +1,7 @@
 /// Config holder for all job related things
 /datum/configuration_section/job_configuration
+	/// Do we want jobs to have minimal access or extra access (IE: Scientists having robotics access)
+	var/jobs_have_minimal_access = TRUE
 	/// Do we want to restrict jobs based on account age
 	var/restrict_jobs_on_account_age = FALSE
 	/// Allow admins to bypass age-based job restrictions
@@ -29,6 +31,7 @@
 
 /datum/configuration_section/job_configuration/load_data(list/data)
 	// Use the load wrappers here. That way the default isnt made 'null' if you comment out the config line
+	CONFIG_LOAD_BOOL(jobs_have_minimal_access, data["jobs_have_minimal_access"])
 	CONFIG_LOAD_BOOL(restrict_jobs_on_account_age, data["restrict_jobs_on_account_age"])
 	CONFIG_LOAD_BOOL(restrict_jobs_on_account_age_admin_bypass, data["restrict_jobs_on_account_age_admin_bypass"])
 	CONFIG_LOAD_BOOL(enable_exp_tracking, data["enable_exp_tracking"])

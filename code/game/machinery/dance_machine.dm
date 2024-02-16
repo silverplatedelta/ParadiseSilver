@@ -146,7 +146,7 @@
 			var/list/available = list()
 			for(var/datum/track/S in songs)
 				available[S.song_name] = S
-			var/selected = tgui_input_list(usr, "Select a new track", "Track:", available)
+			var/selected = input(usr, "Choose your song", "Track:") as null|anything in available
 			if(QDELETED(src) || !selected || !istype(available[selected], /datum/track))
 				return
 			selection = available[selected]
