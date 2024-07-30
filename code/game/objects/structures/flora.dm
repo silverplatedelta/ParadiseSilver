@@ -36,9 +36,6 @@
 /obj/structure/flora/tree/dead/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/largetransparency, 0, 1, 0, 0)
-
-/obj/structure/flora/tree/dead/Initialize(mapload)
-	. = ..()
 	icon_state = "tree_[rand(1, 6)]"
 
 /obj/structure/flora/tree/palm
@@ -237,7 +234,7 @@
 
 /obj/structure/flora/ausbushes/ppflowers/Initialize(mapload)
 	. = ..()
-	icon_state = "ppflowers_[rand(1, 4)]"
+	icon_state = "ppflowers_[rand(1, 3)]"
 
 /obj/structure/flora/ausbushes/sparsegrass
 	icon_state = "sparsegrass_1"

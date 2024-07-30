@@ -1269,6 +1269,12 @@
 
 		usr.client.view_asays()
 
+	else if(href_list["msays"])
+		if(!check_rights(R_ADMIN | R_MENTOR))
+			return
+
+		usr.client.view_msays()
+
 	else if(href_list["tdome1"])
 		if(!check_rights(R_SERVER|R_EVENT))	return
 
@@ -1567,13 +1573,14 @@
 		usr.client.cmd_admin_robotize(H)
 
 	else if(href_list["makeanimal"])
-		if(!check_rights(R_SPAWN))	return
+		if(!check_rights(R_SPAWN))
+			return
 
 		var/mob/M = locateUID(href_list["makeanimal"])
 		if(isnewplayer(M))
 			to_chat(usr, "<span class='warning'>This cannot be used on instances of type /mob/new_player</span>")
 			return
-		if(alert(usr, "Confirm make animal?", null, "Yes", "No") != "Yes")
+		if(tgui_alert(usr, "Confirm make animal?", "Confirm Choice", list("Yes", "No")) != "Yes")
 			return
 
 		usr.client.cmd_admin_animalize(M)
@@ -1612,6 +1619,17 @@
 		usr.client.cmd_admin_toggle_block(H,block)
 		show_player_panel(H)
 		//H.regenerate_icons()
+
+	else if(href_list["adminobserve"])
+		if(!check_rights(R_ADMIN|R_MOD|R_MENTOR))
+			return
+		var/client/C = usr.client
+		var/mob/M = locateUID(href_list["adminobserve"])
+
+		if(!ismob(M))
+			to_chat(usr, "<span class='warning'>This can only be used on instances of type /mob</span>")
+			return
+		C.admin_observe_target(M)
 
 	else if(href_list["adminplayeropts"])
 		var/mob/M = locateUID(href_list["adminplayeropts"])
@@ -1780,10 +1798,10 @@
 			to_chat(usr, "<span class='warning'>This can only be used on instances of type /mob/living/carbon/human</span>")
 			return
 
-		H.equip_to_slot_or_del( new /obj/item/food/snacks/cookie(H), SLOT_HUD_LEFT_HAND )
-		if(!(istype(H.l_hand,/obj/item/food/snacks/cookie)))
-			H.equip_to_slot_or_del( new /obj/item/food/snacks/cookie(H), SLOT_HUD_RIGHT_HAND )
-			if(!(istype(H.r_hand,/obj/item/food/snacks/cookie)))
+		H.equip_to_slot_or_del( new /obj/item/food/cookie(H), SLOT_HUD_LEFT_HAND )
+		if(!(istype(H.l_hand,/obj/item/food/cookie)))
+			H.equip_to_slot_or_del( new /obj/item/food/cookie(H), SLOT_HUD_RIGHT_HAND )
+			if(!(istype(H.r_hand,/obj/item/food/cookie)))
 				log_admin("[key_name(H)] has their hands full, so they did not receive their cookie, spawned by [key_name(src.owner)].")
 				message_admins("[key_name_admin(H)] has [H.p_their()] hands full, so [H.p_they()] did not receive [H.p_their()] cookie, spawned by [key_name_admin(src.owner)].")
 				return
@@ -2062,15 +2080,16 @@
 			ptypes += "Shamebrero"
 			ptypes += "Nugget"
 			ptypes += "Bread"
+			ptypes += "Rod"
 		var/punishment = input(owner, "How would you like to smite [M]?", "Its good to be baaaad...", "") as null|anything in ptypes
 		if(!(punishment in ptypes))
 			return
-		var/logmsg = null
+		var/logmsg = "UNSET LOG MESSAGE: [punishment]"
 		switch(punishment)
 			// These smiting types are valid for all living mobs
 			if("Lightning bolt")
 				M.electrocute_act(5, "Lightning Bolt", flags = SHOCK_NOGLOVES)
-				playsound(get_turf(M), 'sound/magic/lightningshock.ogg', 50, 1, -1)
+				playsound(get_turf(M), 'sound/magic/lightningshock.ogg', 50, TRUE, -1)
 				M.adjustFireLoss(75)
 				M.Weaken(10 SECONDS)
 				to_chat(M, "<span class='userdanger'>The gods have punished you for your sins!</span>")
@@ -2078,7 +2097,9 @@
 			if("Fire Death")
 				to_chat(M,"<span class='userdanger'>You feel hotter than usual. Maybe you should lowe-wait, is that your hand melting?</span>")
 				var/turf/simulated/T = get_turf(M)
-				new /obj/effect/hotspot(T)
+				var/obj/effect/hotspot/hotspot = new /obj/effect/hotspot/fake(T)
+				hotspot.temperature = 1000
+				hotspot.recolor()
 				M.adjustFireLoss(150)
 				logmsg = "a firey death."
 			if("Gib")
@@ -2113,7 +2134,7 @@
 				ADD_TRAIT(H, TRAIT_BADDNA, "smiting")
 				logmsg = "cluwned."
 			if("Mutagen Cookie")
-				var/obj/item/food/snacks/cookie/evilcookie = new /obj/item/food/snacks/cookie
+				var/obj/item/food/cookie/evilcookie = new /obj/item/food/cookie
 				evilcookie.reagents.add_reagent("mutagen", 10)
 				evilcookie.desc = "It has a faint green glow."
 				evilcookie.bitesize = 100
@@ -2122,7 +2143,7 @@
 				H.equip_to_slot_or_del(evilcookie, SLOT_HUD_LEFT_HAND)
 				logmsg = "a mutagen cookie."
 			if("Hellwater Cookie")
-				var/obj/item/food/snacks/cookie/evilcookie = new /obj/item/food/snacks/cookie
+				var/obj/item/food/cookie/evilcookie = new /obj/item/food/cookie
 				evilcookie.reagents.add_reagent("hell_water", 25)
 				evilcookie.desc = "Sulphur-flavored."
 				evilcookie.bitesize = 100
@@ -2185,10 +2206,9 @@
 				to_chat(H, "<span class='danger'>You feel as if your limbs are being ripped from your body!</span>")
 				addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, make_nugget)), 6 SECONDS)
 				logmsg = "nugget"
-
 			if("Bread")
 				var/mob/living/simple_animal/shade/sword/bread/breadshade = new(H.loc)
-				var/bready = pick(/obj/item/food/snacks/customizable/cook/bread, /obj/item/food/snacks/sliceable/meatbread, /obj/item/food/snacks/sliceable/xenomeatbread, /obj/item/food/snacks/sliceable/spidermeatbread, /obj/item/food/snacks/sliceable/bananabread, /obj/item/food/snacks/sliceable/tofubread, /obj/item/food/snacks/sliceable/bread, /obj/item/food/snacks/sliceable/creamcheesebread, /obj/item/food/snacks/sliceable/banarnarbread, /obj/item/food/snacks/flatbread, /obj/item/food/snacks/baguette)
+				var/bready = pick(/obj/item/food/customizable/cook/bread, /obj/item/food/sliceable/meatbread, /obj/item/food/sliceable/xenomeatbread, /obj/item/food/sliceable/spidermeatbread, /obj/item/food/sliceable/bananabread, /obj/item/food/sliceable/tofubread, /obj/item/food/sliceable/bread, /obj/item/food/sliceable/creamcheesebread, /obj/item/food/sliceable/banarnarbread, /obj/item/food/flatbread, /obj/item/food/baguette)
 				var/obj/item/bread = new bready(get_turf(H))
 				breadshade.forceMove(bread)
 				breadshade.key = H.key
@@ -2196,6 +2216,14 @@
 				qdel(H)
 				logmsg = "baked"
 				to_chat(breadshade, "<span class='warning'>Get bready for combat, you've been baked into a piece of bread! Before you break down and rye thinking that your life is over, people are after you waiting for a snack! If you'd rather not be toast, lunge away from any hungry crew else you bite the crust. At the yeast you may survive a little longer...</span>")
+			if("Rod")
+
+				var/starting_turf_x = M.x + rand(10, 15) * pick(1, -1)
+				var/starting_turf_y = M.y + rand(10, 15) * pick(1, -1)
+				var/turf/start = locate(starting_turf_x, starting_turf_y, M.z)
+
+				new /obj/effect/immovablerod/smite(start, M)
+				logmsg = "a rod"
 		if(logmsg)
 			log_admin("[key_name(owner)] smited [key_name(M)] with: [logmsg]")
 			message_admins("[key_name_admin(owner)] smited [key_name_admin(M)] with: [logmsg]")
@@ -3570,7 +3598,12 @@
 	if(!target) return
 	// The way admin jump links handle their src is weirdly inconsistent...
 
-	. = ADMIN_FLW(target,"FLW")
+	if(isclient(target))
+		var/client/C = target
+		if(C.mob)
+			target = C.mob
+
+	. = ADMIN_FLW(target, "FLW")
 	if(isAI(target)) // AI core/eye follow links
 		var/mob/living/silicon/ai/A = target
 		if(A.client && A.eyeobj) // No point following clientless AI eyes
@@ -3579,3 +3612,5 @@
 		var/mob/dead/observer/O = target
 		if(O.mind && O.mind.current)
 			. += "|[ADMIN_FLW(O.mind.current,"BDY")]"
+	else if(ismob(target))
+		. += "|[ADMIN_OBS(target, "OBS")]"

@@ -691,12 +691,12 @@
 
 				if("physique")
 					var/new_physique = tgui_input_list(user, "Choose your descriptor for how built your character is on glance.", "Character Preference", GLOB.character_physiques)
-					if(new_physique)
+					if(new_physique in GLOB.character_physiques)
 						active_character.physique = new_physique
 
 				if("height")
 					var/new_height = tgui_input_list(user, "Choose your descriptor for how tall your character is on glance.", "Character Preference", GLOB.character_heights)
-					if(new_height)
+					if(new_height in GLOB.character_heights)
 						active_character.height = new_height
 
 				if("flavor_text")
@@ -896,7 +896,6 @@
 						return
 					switch(newgender)
 						if("Male")
-
 							active_character.gender = MALE
 						if("Female")
 							active_character.gender = FEMALE
@@ -953,6 +952,22 @@
 
 				if("ghost_att_anim")
 					toggles2 ^= PREFTOGGLE_2_ITEMATTACK
+
+				if("enablelighting")
+					var/datum/preference_toggle/special_toggle/toggle = GLOB.preference_toggles[/datum/preference_toggle/toggle_new_lighting]
+					toggle.set_toggles(user.client)
+
+				if("glowlevel")
+					var/datum/preference_toggle/special_toggle/toggle = GLOB.preference_toggles[/datum/preference_toggle/special_toggle/set_glow_level]
+					toggle.set_toggles(user.client)
+
+				if("exposure")
+					var/datum/preference_toggle/special_toggle/toggle = GLOB.preference_toggles[/datum/preference_toggle/toggle_lamp_exposure]
+					toggle.set_toggles(user.client)
+
+				if("glare")
+					var/datum/preference_toggle/special_toggle/toggle = GLOB.preference_toggles[/datum/preference_toggle/toggle_lamps_glare]
+					toggle.set_toggles(user.client)
 
 				if("winflash")
 					toggles2 ^= PREFTOGGLE_2_WINDOWFLASHING
@@ -1114,6 +1129,9 @@
 				if("parallax_darkness")
 					toggles2 ^= PREFTOGGLE_2_PARALLAX_IN_DARKNESS
 					parent.mob?.hud_used?.update_parallax_pref()
+
+				if("tgui_strip_menu")
+					toggles2 ^= PREFTOGGLE_2_BIG_STRIP_MENU
 
 				if("screentip_mode")
 					var/desired_screentip_mode = tgui_input_number(user, "Pick a screentip size, pick 0 to disable screentips. (We suggest a number between 8 and 15):", "Screentip Size", screentip_mode, 20, 0)

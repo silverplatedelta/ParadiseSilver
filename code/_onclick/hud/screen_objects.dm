@@ -367,6 +367,8 @@
 	screen_loc = ui_crafting
 
 /atom/movable/screen/craft/Click()
+	if(!isliving(usr))
+		return
 	var/mob/living/M = usr
 	M.OpenCraftingMenu()
 
@@ -396,24 +398,29 @@
 	object_overlays.Cut()
 
 /atom/movable/screen/inventory/proc/add_overlays()
-	var/mob/user = hud.mymob
+	var/mob/user = hud?.mymob
 
-	if(hud && user && slot_id)
-		var/obj/item/holding = user.get_active_hand()
+	if(!user || user != usr)
+		return
 
-		if(!holding || user.get_item_by_slot(slot_id))
-			return
+	if(!hud?.mymob || !slot_id || slot_id == SLOT_HUD_LEFT_HAND || slot_id == SLOT_HUD_RIGHT_HAND)
+		return
 
-		var/image/item_overlay = image(holding)
-		item_overlay.alpha = 92
+	var/obj/item/holding = user.get_active_hand()
 
-		if(!user.can_equip(holding, slot_id, disable_warning = TRUE))
-			item_overlay.color = "#ff0000"
-		else
-			item_overlay.color = "#00ff00"
+	if(!holding || user.get_item_by_slot(slot_id))
+		return
 
-		object_overlays += item_overlay
-		add_overlay(object_overlays)
+	var/image/item_overlay = image(holding)
+	item_overlay.alpha = 92
+
+	if(!user.can_equip(holding, slot_id, TRUE))
+		item_overlay.color = "#ff0000"
+	else
+		item_overlay.color = "#00ff00"
+
+	object_overlays += item_overlay
+	add_overlay(object_overlays)
 
 /atom/movable/screen/inventory/MouseDrop(atom/over)
 	cut_overlay(object_overlays)
@@ -551,6 +558,12 @@
 	if(ishuman(usr) && usr.stat != DEAD)
 		var/mob/living/carbon/H = usr
 		H.check_self_for_injuries()
+
+/atom/movable/screen/nutrition
+	name = "nutrition"
+	icon = 'icons/mob/screen_hunger.dmi'
+	icon_state = null
+	screen_loc = ui_nutrition
 
 /atom/movable/screen/component_button
 	var/atom/movable/screen/parent

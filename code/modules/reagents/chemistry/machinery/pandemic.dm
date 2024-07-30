@@ -163,9 +163,11 @@
 			B.reagents.add_reagent("vaccine", 15, list(vaccine_type))
 		if("eject_beaker")
 			eject_beaker()
+			update_static_data(ui.user)
 		if("destroy_eject_beaker")
 			beaker.reagents.clear_reagents()
 			eject_beaker()
+			update_static_data(ui.user)
 		if("print_release_forms")
 			var/strain_index = text2num(params["strain_index"])
 			if(isnull(strain_index))
@@ -202,6 +204,7 @@
 			A.AssignName(new_name)
 			for(var/datum/disease/advance/AD in GLOB.active_diseases)
 				AD.Refresh()
+			update_static_data(ui.user)
 		if("switch_strain")
 			var/strain_index = text2num(params["strain_index"])
 			if(isnull(strain_index) || strain_index < 1)
@@ -312,6 +315,8 @@
 	D = GLOB.archive_diseases[D.GetDiseaseID()]
 	if(!(printing) && D)
 		var/reason = tgui_input_text(user,"Enter a reason for the release", "Write", multiline = TRUE)
+		if(!reason)
+			return
 		reason += "<span class=\"paper_field\"></span>"
 		var/english_symptoms = list()
 		for(var/I in D.symptoms)
@@ -395,7 +400,6 @@
 		beaker =  I
 		beaker.loc = src
 		to_chat(user, "<span class='notice'>You add the beaker to the machine.</span>")
-		updateUsrDialog()
 		SStgui.update_uis(src, TRUE)
 		icon_state = "pandemic1"
 	else

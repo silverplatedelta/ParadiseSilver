@@ -253,7 +253,7 @@
 
 /obj/item/borg/upgrade/vtec
 	name = "robotic VTEC Module"
-	desc = "Used to activate a cyborg's VTEC systems, increasing their speed."
+	desc = "Used to activate a cyborg's VTEC systems, allowing them to retain more speed when damaged. Alternatively speeds up slow vehicles."
 	icon_state = "cyborg_upgrade2"
 	require_module = TRUE
 	origin_tech = "engineering=4;materials=5;programming=4"
@@ -264,7 +264,7 @@
 		to_chat(usr, "<span class='notice'>There's no room for another VTEC unit!</span>")
 		return
 
-	R.speed -= 1 // Gotta go fast.
+	R.slowdown_cap = 3.5
 	return TRUE
 
 /***********************/
@@ -486,3 +486,24 @@
 		return
 	for(var/obj/item/reagent_containers/borghypo/F in R.module.modules)
 		F.emag_act()
+
+/obj/item/borg/upgrade/abductor_jani
+	name = "janitorial cyborg abductor upgrade"
+	desc = "An experimental upgrade that replaces a janitorial cyborg's tools with the abductor versions."
+	icon_state = "abductor_mod"
+	origin_tech = "biotech=6;materials=6;abductor=3"
+	require_module = TRUE
+	module_type = /obj/item/robot_module/janitor
+	items_to_replace = list(
+		/obj/item/mop/advanced/cyborg = /obj/item/mop/advanced/abductor,
+		/obj/item/soap = /obj/item/soap/syndie/abductor,
+		/obj/item/lightreplacer/cyborg = /obj/item/lightreplacer/bluespace/abductor,
+		/obj/item/melee/flyswatter = /obj/item/melee/flyswatter/abductor
+	)
+	items_to_add = list(
+		/obj/item/reagent_containers/spray/cleaner/safety/abductor
+	)
+	special_rechargables = list(
+		/obj/item/reagent_containers/spray/cleaner/safety/abductor,
+		/obj/item/lightreplacer/bluespace/abductor
+	)
