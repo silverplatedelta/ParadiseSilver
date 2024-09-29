@@ -1,53 +1,70 @@
-//CONTAINS: Suit fibers and Detective's Scanning Computer
+/obj/item/forensics
+	icon = 'icons/obj/forensics.dmi'
+	w_class = WEIGHT_CLASS_TINY
 
+//This is the output of the stringpercent(print) proc, and means about 80% of
+//the print must be there for it to be complete.  (Prints are 32 digits)
+var/global/const/FINGERPRINT_COMPLETE = 6
+/proc/is_complete_print(print)
+	return stringpercent(print) <= FINGERPRINT_COMPLETE
+
+/obj/item/var/list/trace_DNA
+
+
+/**
+ * Adds forensics fibers to the atom from clothing worn by a mob.
+ *
+ * **Parameters**:
+ * - `M` - The mob to pull fibers from.
+ */
 /atom/proc/add_fibers(mob/living/carbon/human/M)
-	if(M.gloves && isclothing(M.gloves))
+	if(!istype(M))
+		return
+	if(M.gloves && istype(M.gloves,/obj/item/clothing/gloves))
 		var/obj/item/clothing/gloves/G = M.gloves
-		if(G.transfer_blood > 1 && add_blood(G.blood_DNA, G.blood_color))
-			G.transfer_blood--
-
-		if(blood_DNA && should_spread_blood)
-			M.make_bloody_hands(G.blood_DNA, G.blood_color, G.transfer_blood)
-
-	else
-		if(M.bloody_hands > 1 && add_blood(M.blood_DNA, M.hand_blood_color))
+		if(G.transfer_blood) //bloodied gloves transfer blood to touched objects
+			if(add_blood(G.bloody_hands_mob)) //only reduces the bloodiness of our gloves if the item wasn't already bloody
+				G.transfer_blood--
+	else if(M.bloody_hands)
+		if(add_blood(M.bloody_hands_mob))
 			M.bloody_hands--
 
-		if(blood_DNA && should_spread_blood)
-			M.make_bloody_hands(blood_DNA, blood_color, M.bloody_hands)
-
-	if(!suit_fibers) suit_fibers = list()
 	var/fibertext
-	var/item_multiplier = isitem(src)?1.2:1
-	if(M.wear_suit)
+	var/item_multiplier = istype(src,/obj/item)?1.2:1
+	var/suit_coverage = 0
+	if(istype(M.wear_suit, /obj/item/clothing))
 		fibertext = "Material from \a [M.wear_suit]."
-		if(prob(10*item_multiplier) && !(fibertext in suit_fibers) && M.wear_suit.can_leave_fibers)
-			//log_world("Added fibertext: [fibertext]")
-			suit_fibers += fibertext
-		if(!(M.wear_suit.body_parts_covered & UPPER_TORSO))
-			if(M.w_uniform)
-				fibertext = "Fibers from \a [M.w_uniform]."
-				if(prob(12*item_multiplier) && !(fibertext in suit_fibers) && M.w_uniform.can_leave_fibers) //Wearing a suit means less of the uniform exposed.
-					//log_world("Added fibertext: [fibertext]")
-					suit_fibers += fibertext
-		if(!(M.wear_suit.body_parts_covered & HANDS))
-			if(M.gloves)
-				fibertext = "Material from a pair of [M.gloves.name]."
-				if(prob(20*item_multiplier) && !(fibertext in suit_fibers) && M.gloves.can_leave_fibers)
-					//log_world("Added fibertext: [fibertext]")
-					suit_fibers += fibertext
-	else if(M.w_uniform)
-		fibertext = "Fibers from \a [M.w_uniform]."
-		if(prob(15*item_multiplier) && !(fibertext in suit_fibers) && M.w_uniform.can_leave_fibers)
-			// "Added fibertext: [fibertext]"
-			suit_fibers += fibertext
-		if(M.gloves)
-			fibertext = "Material from a pair of [M.gloves.name]."
-			if(prob(20*item_multiplier) && !(fibertext in suit_fibers) && M.gloves.can_leave_fibers)
-				//log_world("Added fibertext: [fibertext]")
-				suit_fibers += "Material from a pair of [M.gloves.name]."
-	else if(M.gloves)
-		fibertext = "Material from a pair of [M.gloves.name]."
-		if(prob(20*item_multiplier) && !(fibertext in suit_fibers) && M.gloves.can_leave_fibers)
-			//log_world("Added fibertext: [fibertext]")
-			suit_fibers += "Material from a pair of [M.gloves.name]."
+		if(fibertext && prob(10*item_multiplier))
+			LAZYDISTINCTADD(suit_fibers, fibertext)
+
+	if(istype(M.w_uniform, /obj/item/clothing) && (M.w_uniform.body_parts_covered & ~suit_coverage))
+		fibertext = "Material from \a [M.wear_suit]."
+		if(fibertext && prob(15*item_multiplier))
+			LAZYDISTINCTADD(suit_fibers, fibertext)
+
+	if(istype(M.gloves, /obj/item/clothing) && (M.gloves.body_parts_covered & ~suit_coverage))
+		fibertext = "Material from \a [M.wear_suit]."
+		if(fibertext && prob(20*item_multiplier))
+			LAZYDISTINCTADD(suit_fibers, fibertext)
+
+/obj/item/proc/add_trace_DNA(mob/living/carbon/M)
+	if(!istype(M))
+		return
+	if(issilicon(M))
+		return
+	if(istype(M.dna))
+		LAZYDISTINCTADD(trace_DNA, M.dna.unique_enzymes)
+
+/mob/proc/get_full_print()
+	return FALSE
+
+/mob/living/carbon/human/get_full_print(ignoregloves)
+	if(!..())
+		return FALSE
+
+
+/* this would allow for replaced limbs to leave different prints, might make it work later -silver
+	var/obj/item/organ/external/E = get_organ(hand ? BODY_ZONE_PRECISE_L_HAND : BODY_ZONE_PRECISE_R_HAND)
+	if(E)
+		return E.get_fingerprint()
+*/

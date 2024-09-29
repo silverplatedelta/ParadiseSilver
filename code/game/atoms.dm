@@ -6,8 +6,11 @@
 	var/flags_2 = NONE
 	/// how the atom should handle ricochet behavior
 	var/flags_ricochet = NONE
+	// LAZYLIST of fingerprints present on the atom. Index is the full print, value is either the full print or a starred version of the full print as a partial. Do not modify directly. See `add_fingerprint()`, `add_partial_print()`, and `transfer_fingerprints_to()`.
 	var/list/fingerprints
+	/// LAZYLIST of mobs that have touched/used the atom. Used for staff investigation. Each entry includes a timestamp and name of the mob that generated the fingerprint. Do not modify directly. See `add_hiddenprint()`.
 	var/list/fingerprintshidden
+	/// String. The last ckey to generate fingerprints on this atom. Used to reduce the number of duplicate `fingerprintshidden` entries.
 	var/fingerprintslast = null
 	///For handling persistent filters
 	var/list/filter_data
@@ -44,8 +47,10 @@
 
 	// Detective Work, used for the duplicate data points kept in the scanners
 	var/list/original_atom
-	/// List of fibers that this atom has
+	/// LAZYLIST of clothing fibers persent on the atom. Do not modify directly. See `add_fibers()` and `transfer_fingerprints_to()`.
 	var/list/suit_fibers
+	// LAZYLIST of gunshot residue present on the atom. Each entry contains the caliber of ammunition that generated the residue. Updated by `/obj/item/ammo_casing/proc/put_residue_on()`.
+	var/list/gunshot_residue
 
 	var/admin_spawned = FALSE	//was this spawned by an admin? used for stat tracking stuff.
 
@@ -719,9 +724,7 @@
 	return
 
 /atom/proc/add_hiddenprint(mob/living/M)
-	if(isnull(M))
-		return
-	if(isnull(M.key))
+	if(!M || !M.key)
 		return
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
@@ -755,19 +758,19 @@
 
 //Set ignoregloves to add prints irrespective of the mob having gloves on.
 /atom/proc/add_fingerprint(mob/living/M, ignoregloves = FALSE)
-	if(isnull(M))
-		return
-	if(isnull(M.key))
+	if(isnull(M) || isnull(M.key) || isAI(M))
 		return
 	if(ishuman(M))
 		//Add the list if it does not exist.
 		if(!fingerprintshidden)
 			fingerprintshidden = list()
 
-		//Fibers~
+		//Fibers
 		add_fibers(M)
+		//Logging purposes
+		add_hiddenprint(M)
 
-		//He has no prints!
+		//He has no prints!  We can problably clean up the fingerprintshidden usage here, though I want a second opinion due to its importance in logging - Silver
 		if(HAS_TRAIT(M, TRAIT_NOFINGERPRINTS))
 			if(fingerprintslast != M.key)
 				fingerprintshidden += "(Has no fingerprints) Real name: [M.real_name], Key: [M.key]"
@@ -795,29 +798,81 @@
 					fingerprintslast = H.ckey
 				return FALSE
 
-		//More adminstuffz
-		if(fingerprintslast != H.ckey)
-			fingerprintshidden += "\[[all_timestamps()]\] Real name: [H.real_name], Key: [H.key]"
-			fingerprintslast = H.ckey
 
 		//Make the list if it does not exist.
 		if(!fingerprints)
 			fingerprints = list()
 
 		//Hash this shit.
-		var/full_print = H.get_full_print()
+		var/full_print = M.get_full_print(ignoregloves)
+		if(!full_print)
+			return
 
-		// Add the fingerprints
-		fingerprints[full_print] = full_print
+		//Using prints from severed hand items!
+		var/obj/item/organ/external/E = M.get_active_hand()
+		if(src != E && istype(E) && E.get_fingerprint())
+			full_print = E.get_fingerprint()
+			ignoregloves = 1
+
+		//Detectives are less likely to leave prints on their own scenes
+		var/additional_chance = 0
+		if(!M.mind.assigned_role == "Detective")
+			additional_chance = 10
+
+		//add the prints
+		add_partial_print(full_print, additional_chance)
 
 		return TRUE
 	else
-		//Smudge up dem prints some
+		//Non human prints logging (for admins, again unsure if this is needed now that addiddenprint is working)
 		if(fingerprintslast != M.ckey)
 			fingerprintshidden += "\[[all_timestamps()]\] Real name: [M.real_name], Key: [M.key]"
 			fingerprintslast = M.ckey
 
 	return
+
+/**
+ * Adds a partial print to the atom's fingerprints list.
+ *
+ * **Parameters**:
+ * - `full_print` (string) - The full fingerprint to be converted to a partial.
+ * - `bonus` (int) - Additional bonus to the chance of a more complete print.
+ */
+/atom/proc/add_partial_print(full_print, bonus)
+	LAZYINITLIST(fingerprints)
+	if(!fingerprints[full_print])
+		fingerprints[full_print] = stars(full_print, rand(0 + bonus, 20 + bonus))	//Initial touch, not leaving much evidence the first time.
+	else
+		switch(max(stringpercent(fingerprints[full_print]) - bonus,0))		//tells us how many stars are in the current prints.
+			if(28 to 32)
+				if(prob(1))
+					fingerprints[full_print] = full_print 		// You rolled a one buddy.
+				else
+					fingerprints[full_print] = stars(full_print, rand(0,40)) // 24 to 32
+
+			if(24 to 27)
+				if(prob(3))
+					fingerprints[full_print] = full_print     	//Sucks to be you.
+				else
+					fingerprints[full_print] = stars(full_print, rand(15, 55)) // 20 to 29
+
+			if(20 to 23)
+				if(prob(5))
+					fingerprints[full_print] = full_print		//Had a good run didn't ya.
+				else
+					fingerprints[full_print] = stars(full_print, rand(30, 70)) // 15 to 25
+
+			if(16 to 19)
+				if(prob(5))
+					fingerprints[full_print] = full_print		//Welp.
+				else
+					fingerprints[full_print]  = stars(full_print, rand(40, 100))  // 0 to 21
+
+			if(0 to 15)
+				if(prob(5))
+					fingerprints[full_print] = stars(full_print, rand(0,50)) 	// small chance you can smudge.
+				else
+					fingerprints[full_print] = full_print
 
 /atom/proc/transfer_fingerprints_to(atom/A)
 	// Make sure everything are lists.
