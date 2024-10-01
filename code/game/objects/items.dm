@@ -750,6 +750,12 @@ GLOBAL_DATUM_INIT(welding_sparks, /mutable_appearance, mutable_appearance('icons
 						"<span class='notice'>You wash [src] using [source].</span>")
 	return TRUE
 
+///Luminol can be used to make blood more obvious and reveal cleaned blood off objects!
+/obj/item/proc/reveal_blood(obj/item/I)
+	if(was_bloodied)
+		I.blood_color = "#00f7ff"
+		update_icon()
+
 /obj/item/proc/get_crutch_efficiency() // Does an item prop up a human mob and allow them to stand if they are missing a leg/foot?
 	return FALSE
 

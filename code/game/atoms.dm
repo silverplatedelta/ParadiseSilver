@@ -21,6 +21,8 @@
 	var/can_pathfind_pass = CANPATHFINDPASS_DENSITY
 
 	var/list/blood_DNA
+	/// Boolean. Whether or not the atom was bloodied at any point. This remains TRUE even when `is_bloodied` is set to FALSE, except in very specific circumstances. Used for luminol handling to detect cleaned blood.
+	var/was_bloodied = FALSE
 	var/blood_color
 	/// Will the atom spread blood when touched?
 	var/should_spread_blood = FALSE
@@ -723,6 +725,8 @@
 /atom/proc/after_slip(mob/living/carbon/human/H)
 	return
 
+
+///used in ADMIN LOGGING, should replace these calls in random places. should. I hate DM.
 /atom/proc/add_hiddenprint(mob/living/M)
 	if(!M || !M.key)
 		return

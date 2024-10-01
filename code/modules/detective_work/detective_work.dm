@@ -23,7 +23,7 @@ var/global/const/FINGERPRINT_COMPLETE = 6
 	if(M.gloves && istype(M.gloves,/obj/item/clothing/gloves))
 		var/obj/item/clothing/gloves/G = M.gloves
 		if(G.transfer_blood) //bloodied gloves transfer blood to touched objects
-			if(add_blood(G.bloody_hands_mob)) //only reduces the bloodiness of our gloves if the item wasn't already bloody
+			if(add_blood(M.bloody_hands_mob)) //only reduces the bloodiness of our gloves if the item wasn't already bloody
 				G.transfer_blood--
 	else if(M.bloody_hands)
 		if(add_blood(M.bloody_hands_mob))
@@ -54,14 +54,6 @@ var/global/const/FINGERPRINT_COMPLETE = 6
 		return
 	if(istype(M.dna))
 		LAZYDISTINCTADD(trace_DNA, M.dna.unique_enzymes)
-
-/mob/proc/get_full_print()
-	return FALSE
-
-/mob/living/carbon/human/get_full_print(ignoregloves)
-	if(!..())
-		return FALSE
-
 
 /* this would allow for replaced limbs to leave different prints, might make it work later -silver
 	var/obj/item/organ/external/E = get_organ(hand ? BODY_ZONE_PRECISE_L_HAND : BODY_ZONE_PRECISE_R_HAND)

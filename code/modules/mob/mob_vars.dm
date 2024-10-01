@@ -223,6 +223,11 @@
 	var/blood_state = BLOOD_STATE_NOT_BLOODY
 	/// Assoc list for tracking how "bloody" a mobs feet are, used for creating bloody foot/shoeprints on turfs when moving
 	var/list/bloody_feet = list(BLOOD_STATE_HUMAN = 0, BLOOD_STATE_XENO = 0, BLOOD_STATE_NOT_BLOODY = 0, BLOOD_BASE_ALPHA = BLOODY_FOOTPRINT_BASE_ALPHA)
+	/// Assoc list for tracking how bloody a mobs hands are (literal sence)
+	var/mob/living/carbon/human/bloody_hands_mob
+	/// used for tracking bloodstains
+	var/track_blood = 0
+	var/track_blood_type
 	/// Affects if you have a typing indicator
 	var/typing
 	/// Affects if you have a thinking indicator
@@ -253,3 +258,5 @@
 	/// Does this mob speak OOC?
 	/// Controls whether they can say some symbols.
 	var/speaks_ooc = FALSE
+
+

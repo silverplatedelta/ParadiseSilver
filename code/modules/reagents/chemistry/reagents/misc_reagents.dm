@@ -727,3 +727,23 @@
 
 	if(H.dna.species.bodyflags & HAS_SKIN_COLOR) //take current alien color and darken it slightly
 		H.change_skin_color("#9B7653")
+
+
+///Blood glowy stuff (detective content)
+/datum/reagent/luminol
+	name = "Luminol"
+	description = "A compound that interacts with blood on the molecular level."
+	taste_description = "metal"
+	reagent_state = LIQUID
+	color = "#00f7ff"
+	taste_description = "glowsticks"
+
+/datum/reagent/proc/touch_obj(obj/O, amount) // applicaiton proc
+	return
+
+/**
+ * Called when the atom is affected by luminol. Reveals blood present on the item.
+ */
+
+/datum/reagent/luminol/touch_obj(obj/item/O)
+	O.reveal_blood()

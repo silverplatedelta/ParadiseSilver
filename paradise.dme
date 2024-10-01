@@ -1804,7 +1804,6 @@
 #include "code\modules\detective_work\tools\sample_kits.dm"
 #include "code\modules\detective_work\tools\scene_cards.dm"
 #include "code\modules\detective_work\tools\swabs.dm"
-#include "code\modules\detective_work\tools\uvlight.dm"
 #include "code\modules\economy\Accounts_DB.dm"
 #include "code\modules\economy\economy_admin.dm"
 #include "code\modules\economy\economy_helpers.dm"

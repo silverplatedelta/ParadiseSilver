@@ -327,3 +327,6 @@ I use this so that this can be made better once the organ overhaul rolls out -- 
 		last_pain_message = msg
 		to_chat(owner, msg)
 		next_pain_time = world.time + 10 SECONDS
+
+/obj/item/organ/proc/get_fingerprint()
+	return md5(dna.uni_identity)
