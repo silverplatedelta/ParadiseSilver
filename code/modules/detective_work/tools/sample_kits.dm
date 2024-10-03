@@ -152,7 +152,7 @@
 	to_chat(user, SPAN_NOTICE("You transfer [length(S.evidence)] [length(S.evidence) > 1 ? "[evidence_type]s" : "[evidence_type]"] to \the [S]."))
 
 /obj/item/forensics/sample_kit/use_before(atom/target, mob/living/user, click_parameters)
-	if (user.a_intent == I_HELP) // Prevents putting sample kits in bags, on racks/tables, etc when trying to take samples
+	if (user.a_intent == INTENT_HELP) // Prevents putting sample kits in bags, on racks/tables, etc when trying to take samples
 		return ..()
 
 	if (user.skill_check(SKILL_FORENSICS, SKILL_TRAINED) && can_take_sample(user, target))

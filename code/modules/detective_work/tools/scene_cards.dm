@@ -3,7 +3,7 @@
 	desc = "A cardboard box for crime scene marker cards."
 	icon = 'icons/obj/forensics.dmi'
 	icon_state = "cards"
-	w_class = ITEM_SIZE_TINY
+	w_class = WEIGHT_CLASS_TINY
 	startswith = list(
 		/obj/item/csi_marker/n1 = 1,
 		/obj/item/csi_marker/n2 = 1,
@@ -14,18 +14,13 @@
 		/obj/item/csi_marker/n7 = 1
 	)
 
-/obj/item/storage/csi_markers/Initialize()
-	. = ..()
-	make_exact_fit()
-
 /obj/item/csi_marker
 	name = "crime scene marker"
 	desc = "Plastic cards used to mark points of interests on the scene. Just like in the holoshows!"
 	icon = 'icons/obj/forensics.dmi'
 	icon_state = "card1"
-	w_class = ITEM_SIZE_TINY
-	randpixel = 1
-	layer = ABOVE_HUMAN_LAYER  //so you can mark bodies
+	w_class = WEIGHT_CLASS_TINY
+	layer = ABOVE_MOB_LAYER  //so you can mark bodies
 	var/number = 1
 
 /obj/item/csi_marker/Initialize(mapload)
