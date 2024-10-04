@@ -4,15 +4,15 @@
 	icon = 'icons/obj/forensics.dmi'
 	icon_state = "cards"
 	w_class = WEIGHT_CLASS_TINY
-	startswith = list(
-		/obj/item/csi_marker/n1 = 1,
-		/obj/item/csi_marker/n2 = 1,
-		/obj/item/csi_marker/n3 = 1,
-		/obj/item/csi_marker/n4 = 1,
-		/obj/item/csi_marker/n5 = 1,
-		/obj/item/csi_marker/n6 = 1,
-		/obj/item/csi_marker/n7 = 1
-	)
+
+/obj/item/storage/breifcase/crimekit/populate_contents()
+	new /obj/item/csi_marker/n1(src)
+	new /obj/item/csi_marker/n2(src)
+	new /obj/item/csi_marker/n3(src)
+	new /obj/item/csi_marker/n4(src)
+	new /obj/item/csi_marker/n5(src)
+	new /obj/item/csi_marker/n6(src)
+	new /obj/item/csi_marker/n7(src)
 
 /obj/item/csi_marker
 	name = "crime scene marker"

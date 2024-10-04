@@ -6,7 +6,7 @@
 
 // This is pretty nasty but is a damn sight easier than trying to make swabs a stack item.
 /obj/item/swabber/use_before(atom/target, mob/living/user, click_parameters)
-	if (user.a_intent == I_HELP) // Prevents putting sample kits in bags, on racks/tables, etc when trying to take samples
+	if (user.a_intent == INTENT_HELP) // Prevents putting sample kits in bags, on racks/tables, etc when trying to take samples
 		return ..()
 
 	var/obj/item/forensics/swab/swab = new(user)
@@ -35,29 +35,29 @@
 		return FALSE
 
 	if (is_used())
-		to_chat(user, SPAN_WARNING("This swab has already been used."))
+		to_chat(user, "<span class = 'warning'> This swab has already been used.")
 		return TRUE
 
 	var/mob/living/carbon/human/H = M
 	var/sample_type
 
 	if (!H.dna || !H.dna.unique_enzymes)
-		to_chat(user, SPAN_WARNING("They don't seem to have DNA!"))
+		to_chat(user, "<span class = 'warning'> They don't seem to have DNA!")
 		return TRUE
 
-	if (user != H && (H.a_intent != I_HELP && !H.lying && !H.incapacitated(INCAPACITATION_DEFAULT)))
-		user.visible_message(SPAN_DANGER("\The [user] tries to take a swab sample from \the [H], but they move away."))
+	if (user != H && (H.a_intent != INTENT_HELP && !H.IsKnockedDown && !H.IsImmobilized))
+		user.visible_message("<span class = 'warning'> \The [user] tries to take a swab sample from \the [H], but they move away.")
 		return TRUE
 
 	if (user.zone_sel.selecting == BP_MOUTH)
 		if (!H.organs_by_name[BP_HEAD])
-			to_chat(user, SPAN_WARNING("They don't have a head."))
+			to_chat(user, "<span class = 'warning'> They don't have a head.")
 			return TRUE
 		if (!H.check_has_mouth())
-			to_chat(user, SPAN_WARNING("They don't have a mouth."))
+			to_chat(user, "<span class = 'warning'> They don't have a mouth.")
 			return TRUE
 		if (H.wear_mask)
-			to_chat(user, SPAN_WARNING("\The [H] is wearing a mask."))
+			to_chat(user, "<span class = 'warning'> \The [H] is wearing a mask.")
 			return TRUE
 		user.visible_message("[user] swabs \the [H]'s mouth for a saliva sample.")
 		dna = list(H.dna.unique_enzymes)
@@ -66,11 +66,11 @@
 	else
 		var/zone = user.zone_sel.selecting
 		if (!H.has_organ(zone))
-			to_chat(user, SPAN_WARNING("They don't have that part!"))
+			to_chat(user, "<span class = 'warning'> They don't have that part!")
 			return TRUE
 		var/obj/item/organ/external/O = H.get_organ(zone)
 		if (!O.gunshot_residue)
-			to_chat(user, SPAN_NOTICE("There is no gunshot residue on \the [O]."))
+			to_chat(user, "<span class = 'notice'> There is no gunshot residue on \the [O].")
 			return TRUE
 		var/obj/C = H.get_covering_equipped_item_by_zone(zone)
 		if (C)
@@ -85,7 +85,7 @@
 
 /obj/item/forensics/swab/use_after(atom/A, mob/living/user, click_parameters)
 	if(is_used())
-		to_chat(user, SPAN_WARNING("This swab has already been used."))
+		to_chat(user, "<span class = 'warning'> This swab has already been used.")
 		return TRUE
 
 	var/list/choices = list()
@@ -98,7 +98,7 @@
 
 	var/choice
 	if(!length(choices))
-		to_chat(user, SPAN_WARNING("There is no evidence on \the [A]."))
+		to_chat(user,"<span class = 'warning'> There is no evidence on \the [A].")
 		return TRUE
 	else if(length(choices) == 1)
 		choice = choices[1]
@@ -111,7 +111,7 @@
 	var/sample_type
 	if(choice == "Blood")
 		if(!A.blood_DNA || !length(A.blood_DNA))
-			to_chat(user, SPAN_WARNING("There is no blood on \the [A]."))
+			to_chat(user, "<span class = 'warning'> There is no blood on \the [A].")
 			return TRUE
 		dna = A.blood_DNA.Copy()
 		sample_type = "blood"
@@ -119,7 +119,7 @@
 	else if(choice == "Gunshot Residue")
 		var/obj/item/clothing/B = A
 		if(!istype(B) || !B.gunshot_residue)
-			to_chat(user, SPAN_WARNING("There is no residue on \the [A]."))
+			to_chat(user, "<span class = 'warning'> There is no residue on \the [A].")
 			return TRUE
 		gunshot_residue_sample = B.gunshot_residue.Copy()
 		sample_type = "residue"
@@ -127,7 +127,7 @@
 	else if(choice == "DNA traces")
 		var/obj/item/I = A
 		if(!istype(I) || !I.trace_DNA)
-			to_chat(user, SPAN_WARNING("There is no non-blood DNA on \the [A]."))
+			to_chat(user, "<span class = 'warning'> There is no non-blood DNA on \the [A].")
 			return TRUE
 		trace_dna = I.trace_DNA.Copy()
 		sample_type = "trace DNA"

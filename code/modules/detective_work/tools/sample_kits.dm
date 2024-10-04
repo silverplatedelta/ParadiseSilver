@@ -1,8 +1,7 @@
 /obj/item/sample
 	name = "forensic sample"
 	icon = 'icons/obj/forensics.dmi'
-	item_flags = ITEM_FLAG_NO_PRINT
-	w_class = ITEM_SIZE_TINY
+	w_class = WEIGHT_CLASS_TINY
 	var/list/evidence = list()
 	var/object
 
@@ -37,7 +36,7 @@
 	evidence |= supplied.evidence
 	SetName("[initial(name)] (combined)")
 	object = supplied.object + ", " + object
-	to_chat(user, SPAN_NOTICE("You transfer the contents of \the [supplied] into \the [src]."))
+	to_chat(user, "<span class = 'notice'> You transfer the contents of \the [supplied] into \the [src].")
 	return 1
 
 /obj/item/sample/print/merge_evidence(obj/item/sample/supplied, mob/user)
@@ -50,7 +49,7 @@
 			evidence[print] = supplied.evidence[print]
 	SetName("[initial(name)] (combined)")
 	object = supplied.object + ", " + object
-	to_chat(user, SPAN_NOTICE("You overlay \the [src] and \the [supplied], combining the print records."))
+	to_chat(user, "<span class = 'notice'> You overlay \the [src] and \the [supplied], combining the print records.")
 	update_icon()
 	return 1
 
@@ -80,10 +79,10 @@
 		return
 	var/mob/living/carbon/human/H = user
 	if(H.gloves)
-		to_chat(user, SPAN_WARNING("Take \the [H.gloves] off first."))
+		to_chat(user, "<span class = 'warning'> Take \the [H.gloves] off first.")
 		return
 
-	to_chat(user, SPAN_NOTICE("You firmly press your fingertips onto the card."))
+	to_chat(user, "<span class = 'notice'> You firmly press your fingertips onto the card.")
 	var/fullprint = H.get_full_print()
 	evidence[fullprint] = fullprint
 	SetName("[initial(name)] (\the [H])")
@@ -100,11 +99,11 @@
 	var/mob/living/carbon/human/H = M
 
 	if (H.gloves)
-		to_chat(user, SPAN_WARNING("\The [H] is wearing gloves."))
+		to_chat(user, "<span class = 'warning'> \The [H] is wearing gloves.")
 		return TRUE
 
-	if (user != H && H.a_intent != I_HELP && !H.lying)
-		user.visible_message(SPAN_DANGER("\The [user] tries to take prints from \the [H], but they move away."))
+	if (user != H && H.a_intent != INTENT_HELP && !H.lying)
+		user.visible_message("<span class = 'danger'> \The [user] tries to take prints from \the [H], but they move away.")
 		return TRUE
 
 	var/has_hand
@@ -116,7 +115,7 @@
 		if (istype(O) && !O.is_stump())
 			has_hand = 1
 	if (!has_hand)
-		to_chat(user, SPAN_WARNING("They don't have any hands."))
+		to_chat(user, "<span class = 'warning'> They don't have any hands.")
 		return TRUE
 
 	user.visible_message("[user] takes a copy of \the [H]'s fingerprints.")
@@ -133,14 +132,12 @@
 			evidence[print] = supplied.fingerprints[print]
 		supplied.fingerprints.Cut()
 
-/obj/item/forensics
-	item_flags = ITEM_FLAG_NO_PRINT
 
 /obj/item/forensics/sample_kit
 	name = "fiber collection kit"
 	desc = "A magnifying glass and tweezers. Used to lift suit fibers."
 	icon_state = "m_glass"
-	w_class = ITEM_SIZE_SMALL
+	w_class = WEIGHT_CLASS_SMALL
 	var/evidence_type = "fiber"
 	var/evidence_path = /obj/item/sample/fibers
 
@@ -149,16 +146,16 @@
 
 /obj/item/forensics/sample_kit/proc/take_sample(mob/user, atom/supplied)
 	var/obj/item/sample/S = new evidence_path(get_turf(user), supplied)
-	to_chat(user, SPAN_NOTICE("You transfer [length(S.evidence)] [length(S.evidence) > 1 ? "[evidence_type]s" : "[evidence_type]"] to \the [S]."))
+	to_chat(user, "<span class = 'notice'> You transfer [length(S.evidence)] [length(S.evidence) > 1 ? "[evidence_type]s" : "[evidence_type]"] to \the [S].")
 
 /obj/item/forensics/sample_kit/use_before(atom/target, mob/living/user, click_parameters)
 	if (user.a_intent == INTENT_HELP) // Prevents putting sample kits in bags, on racks/tables, etc when trying to take samples
 		return ..()
 
-	if (user.skill_check(SKILL_FORENSICS, SKILL_TRAINED) && can_take_sample(user, target))
+	if (user.mind.assigned_role == "Detective" && can_take_sample(user, target))
 		take_sample(user,target)
 	else
-		to_chat(user, SPAN_WARNING("You are unable to locate any [evidence_type]s on \the [target]."))
+		to_chat(user, "<span class = 'warning'> You are unable to locate any [evidence_type]s on \the [target].")
 	return TRUE
 
 /obj/item/forensics/sample_kit/MouseDrop(atom/over)

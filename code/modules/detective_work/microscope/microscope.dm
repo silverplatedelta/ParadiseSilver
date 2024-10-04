@@ -39,7 +39,7 @@
 			update_icon()
 			return TRUE
 		else
-			to_chat(user,  "<span class = 'warning'> There is already a slide in the microscope."))
+			to_chat(user,  "<span class = 'warning'> There is already a slide in the microscope.")
 			return ..()
 
 	if (istype(W, /obj/item/evidencebag))
