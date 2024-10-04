@@ -45,12 +45,12 @@
 		to_chat(user, "<span class = 'warning'> They don't seem to have DNA!")
 		return TRUE
 
-	if (user != H && (H.a_intent != INTENT_HELP && !H.IsKnockedDown && !H.IsImmobilized))
+	if (user != H && (H.a_intent != INTENT_HELP && !IS_HORIZONTAL(user)))
 		user.visible_message("<span class = 'warning'> \The [user] tries to take a swab sample from \the [H], but they move away.")
 		return TRUE
 
-	if (user.zone_sel.selecting == BP_MOUTH)
-		if (!H.organs_by_name[BP_HEAD])
+	if (user.zone_selected == BODY_ZONE_PRECISE_MOUTH)
+		if (!H.has_organ_for_slot[BODY_ZONE_HEAD])
 			to_chat(user, "<span class = 'warning'> They don't have a head.")
 			return TRUE
 		if (!H.check_has_mouth())
@@ -64,7 +64,7 @@
 		sample_type = "DNA"
 
 	else
-		var/zone = user.zone_sel.selecting
+		var/zone = user.zone_selected
 		if (!H.has_organ(zone))
 			to_chat(user, "<span class = 'warning'> They don't have that part!")
 			return TRUE

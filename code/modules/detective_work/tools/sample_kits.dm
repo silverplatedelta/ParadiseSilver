@@ -102,16 +102,16 @@
 		to_chat(user, "<span class = 'warning'> \The [H] is wearing gloves.")
 		return TRUE
 
-	if (user != H && H.a_intent != INTENT_HELP && !H.lying)
+	if (user != H && H.a_intent != INTENT_HELP && IS_HORIZONTAL(user))
 		user.visible_message("<span class = 'danger'> \The [user] tries to take prints from \the [H], but they move away.")
 		return TRUE
 
 	var/has_hand
-	var/obj/item/organ/external/O = H.organs_by_name[BP_R_HAND]
+	var/obj/item/organ/external/O = H.organs_by_name[BODY_ZONE_PRECISE_R_HAND]
 	if (istype(O) && !O.is_stump())
 		has_hand = 1
 	else
-		O = H.organs_by_name[BP_L_HAND]
+		O = H.organs_by_name[BODY_ZONE_PRECISE_L_HAND]
 		if (istype(O) && !O.is_stump())
 			has_hand = 1
 	if (!has_hand)
