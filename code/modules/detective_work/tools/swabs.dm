@@ -7,12 +7,12 @@
 // This is pretty nasty but is a damn sight easier than trying to make swabs a stack item.
 /obj/item/swabber/use_before(atom/target, mob/living/user, click_parameters)
 	if (user.a_intent == INTENT_HELP) // Prevents putting sample kits in bags, on racks/tables, etc when trying to take samples
-		return ..()
+		return
 
 	var/obj/item/forensics/swab/swab = new(user)
-	swab.resolve_attackby(target, user, click_parameters)
+	swab.attackby(swab, user)
 	if(swab.is_used())
-		swab.dropInto(user.loc)
+		swab.drop_location(user.loc)
 	else
 		qdel(swab)
 	return TRUE
@@ -45,12 +45,12 @@
 		to_chat(user, "<span class = 'warning'> They don't seem to have DNA!")
 		return TRUE
 
-	if (user != H && (H.a_intent != INTENT_HELP && !IS_HORIZONTAL(user)))
+	if (user != H && (H.a_intent != INTENT_HELP))
 		user.visible_message("<span class = 'warning'> \The [user] tries to take a swab sample from \the [H], but they move away.")
 		return TRUE
 
 	if (user.zone_selected == BODY_ZONE_PRECISE_MOUTH)
-		if (!H.has_organ_for_slot[BODY_ZONE_HEAD])
+		if (!H.has_organ("head"))
 			to_chat(user, "<span class = 'warning'> They don't have a head.")
 			return TRUE
 		if (!H.check_has_mouth())
@@ -72,10 +72,10 @@
 		if (!O.gunshot_residue)
 			to_chat(user, "<span class = 'notice'> There is no gunshot residue on \the [O].")
 			return TRUE
-		var/obj/C = H.get_covering_equipped_item_by_zone(zone)
-		if (C)
-			use_after(C, user) //Lazy but this would work
-			return TRUE
+		//var/obj/C = H.get_covering_equipped_item_by_zone(zone)
+		//if (C)
+		//	use_after(C, user) //Lazy but this would work
+		//	return TRUE
 		user.visible_message("[user] swabs [H]'s [O.name] for a sample.")
 		sample_type = "gunshot_residue"
 		gunshot_residue_sample = O.gunshot_residue.Copy()

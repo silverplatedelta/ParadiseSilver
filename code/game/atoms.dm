@@ -808,7 +808,7 @@
 			fingerprints = list()
 
 		//Hash this shit.
-		var/full_print = M.get_full_print(ignoregloves)
+		var/full_print = H.get_full_print(ignoregloves)
 		if(!full_print)
 			return
 
