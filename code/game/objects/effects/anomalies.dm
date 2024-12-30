@@ -51,6 +51,11 @@
 		countdown.color = countdown_colour
 	countdown.start()
 
+	// Only log an anomaly if it drops a core. Prevents logging of SM events and Vetus.
+	if(drops_core)
+		message_admins("\A [name] has spawned at [impact_area][ADMIN_COORDJMP(impact_area)]")
+		log_admin("\A [name] has spawned at [impact_area]")
+
 /obj/effect/anomaly/Destroy()
 	GLOB.poi_list.Remove(src)
 	STOP_PROCESSING(SSobj, src)
@@ -82,16 +87,16 @@
 	if(drops_core)
 		aSignal.forceMove(drop_location())
 		aSignal = null
-	// else, anomaly core gets deleted by qdel(src).
+		// Subtracts the time remaining from lifespan to get defuse time, converts it to seconds
+		var/defuse_time = round((lifespan - (death_time - world.time)) / 10)
+		SSblackbox.record_feedback("ledger", "anomaly_defuse_time", "[defuse_time]", "[type]")
 
+	// Else, anomaly core gets deleted by qdel(src).
 	qdel(src)
 
-
-/obj/effect/anomaly/attackby(obj/item/I, mob/user, params)
+/obj/effect/anomaly/attackby__legacy__attackchain(obj/item/I, mob/user, params)
 	if(istype(I, /obj/item/analyzer))
 		to_chat(user, "<span class='notice'>Analyzing... [src]'s unstable field is fluctuating along frequency [format_frequency(aSignal.frequency)], code [aSignal.code].</span>")
-
-///////////////////////
 
 /obj/effect/anomaly/grav
 	name = "gravitational anomaly"
@@ -115,6 +120,11 @@
 			new /obj/item/stack/rods(loc)
 		if(prob(75))
 			new /obj/item/shard(loc)
+
+	var/static/list/loc_connections = list(
+		COMSIG_ATOM_ENTERED = PROC_REF(on_atom_entered),
+	)
+	AddElement(/datum/element/connect_loc, loc_connections)
 
 /obj/effect/anomaly/grav/Destroy()
 	vis_contents -= warp
@@ -142,9 +152,8 @@
 	animate(warp, time = 6, transform = matrix().Scale(0.5,0.5))
 	animate(time = 14, transform = matrix())
 
-/obj/effect/anomaly/grav/Crossed(atom/movable/AM)
-	. = ..()
-	gravShock(AM)
+/obj/effect/anomaly/grav/proc/on_atom_entered(datum/source, atom/movable/entered)
+	gravShock(entered)
 
 /obj/effect/anomaly/grav/Bump(atom/A)
 	gravShock(A)
@@ -165,12 +174,11 @@
 /obj/effect/anomaly/grav/detonate()
 	if(!drops_core)
 		return
-	var/turf/T = get_turf(src)
-	if(T && length(GLOB.gravity_generators["[T.z]"]))
-		var/obj/machinery/gravity_generator/main/G = pick(GLOB.gravity_generators["[T.z]"])
+	var/area/A = get_area(src)
+	if(A && length(GLOB.gravity_generators["[A.get_top_parent_type()]"]))
+		var/obj/machinery/gravity_generator/main/G = pick(GLOB.gravity_generators["[A.get_top_parent_type()]"])
 		G.set_broken() //Requires engineering to fix the gravity generator, as it gets overloaded by the anomaly.
-
-/////////////////////
+		log_and_message_admins("A [name] has detonated a gravity generator")
 
 /obj/effect/anomaly/flux
 	name = "flux wave anomaly"
@@ -191,6 +199,10 @@
 	if(explosive)
 		zap_flags = ZAP_MOB_DAMAGE | ZAP_OBJ_DAMAGE | ZAP_MOB_STUN
 		power = 15000
+	var/static/list/loc_connections = list(
+		COMSIG_ATOM_ENTERED = PROC_REF(on_atom_entered)
+	)
+	AddElement(/datum/element/connect_loc, loc_connections)
 
 /obj/effect/anomaly/flux/anomalyEffect()
 	..()
@@ -200,10 +212,8 @@
 	if(explosive) //Let us not fuck up the sm that much
 		tesla_zap(src, zap_range, power, zap_flags)
 
-
-/obj/effect/anomaly/flux/Crossed(atom/movable/AM)
-	. = ..()
-	mobShock(AM)
+/obj/effect/anomaly/flux/proc/on_atom_entered(datum/source, atom/movable/entered)
+	mobShock(entered)
 
 /obj/effect/anomaly/flux/Bump(atom/A)
 	mobShock(A)
@@ -222,11 +232,11 @@
 
 /obj/effect/anomaly/flux/detonate()
 	if(explosive)
-		explosion(src, 1, 4, 16, 18) //Low devastation, but hits a lot of stuff.
+		explosion(src, 1, 4, 16, 18, FALSE) // Set adminlog to FALSE for custom logging
+		message_admins("\A [name] has detonated at [impact_area][ADMIN_COORDJMP(impact_area)]")
+		log_admin("\A [name] has detonated at [impact_area]")
 	else
 		new /obj/effect/particle_effect/sparks(loc)
-
-/////////////////////
 
 /obj/effect/anomaly/bluespace
 	name = "bluespace anomaly"
@@ -328,9 +338,6 @@
 	M.client.screen -= blueeffect
 	qdel(blueeffect)
 
-
-/////////////////////
-
 /obj/effect/anomaly/pyro
 	name = "pyroclastic anomaly"
 	icon_state = "mustard"
@@ -365,6 +372,9 @@
 /obj/effect/anomaly/pyro/detonate()
 	if(produces_slime)
 		INVOKE_ASYNC(src, PROC_REF(makepyroslime))
+	if(drops_core)
+		message_admins("\A [name] has detonated at [impact_area][ADMIN_COORDJMP(impact_area)]")
+		log_admin("\A [name] has detonated at [impact_area]")
 
 /obj/effect/anomaly/pyro/proc/makepyroslime()
 	var/turf/simulated/T = get_turf(src)
@@ -390,8 +400,6 @@
 		S.mind.special_role = SPECIAL_ROLE_PYROCLASTIC_SLIME
 		dust_if_respawnable(chosen)
 		log_game("[key_name(S.key)] was made into a slime by pyroclastic anomaly at [AREACOORD(T)].")
-
-/////////////////////
 
 /obj/effect/anomaly/cryo
 	name = "cryogenic anomaly"
@@ -466,8 +474,8 @@
 		air.set_sleeping_agent(3000)
 		air.set_carbon_dioxide(3000)
 		T.blind_release_air(air)
-
-/////////////////////
+		message_admins("\A [name] has detonated at [impact_area][ADMIN_COORDJMP(impact_area)]")
+		log_admin("\A [name] has detonated at [impact_area]")
 
 /obj/effect/anomaly/bhole
 	name = "vortex anomaly"

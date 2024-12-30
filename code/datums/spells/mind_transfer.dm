@@ -2,7 +2,6 @@
 	name = "Mind Transfer"
 	desc = "This spell allows the user to switch bodies with a target."
 
-	school = "transmutation"
 	base_cooldown = 600
 	clothes_req = FALSE
 	invocation = "GIN'YU CAPAN"
@@ -41,7 +40,7 @@ Also, you never added distance checking after target is selected. I've went ahea
 		to_chat(user, "<span class='warning'>You're killing yourself! You can't concentrate enough to do this!</span>")
 		return
 
-	if(target.mind.special_role in protected_roles && target != user)
+	if((target.mind.special_role in protected_roles) && target != user)
 		to_chat(user, "<span class='danger'>Their mind is resisting your spell.</span>")
 		return
 

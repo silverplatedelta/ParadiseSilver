@@ -1,4 +1,4 @@
-/mob/living/Initialize()
+/mob/living/Initialize(mapload)
 	. = ..()
 	var/datum/atom_hud/data/human/medical/advanced/medhud = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
 	medhud.add_to_hud(src)
@@ -8,6 +8,9 @@
 	GLOB.mob_living_list += src
 	if(advanced_bullet_dodge_chance)
 		RegisterSignal(src, COMSIG_ATOM_PREHIT, PROC_REF(advanced_bullet_dodge))
+
+	for(var/initial_trait in initial_traits)
+		ADD_TRAIT(src, initial_trait, INNATE_TRAIT)
 
 // Used to determine the forces dependend on the mob size
 // Will only change the force if the force was not set in the mob type itself
@@ -68,10 +71,10 @@
 	return
 
 //Generic Bump(). Override MobBump() and ObjBump() instead of this.
-/mob/living/Bump(atom/A, yes)
+/mob/living/Bump(atom/A)
 	if(..()) //we are thrown onto something
 		return
-	if(buckled || !yes || now_pushing)
+	if(buckled || now_pushing)
 		return
 	if(ismob(A))
 		if(MobBump(A))
@@ -293,7 +296,7 @@
 	if(stat == DEAD)
 		to_chat(src, "<span class='notice'>It's too late, you're already dead!</span>")
 		return
-	if(health >= HEALTH_THRESHOLD_CRIT)
+	if(health >= HEALTH_THRESHOLD_SUCCUMB)
 		to_chat(src, "<span class='warning'>You are unable to succumb to death! This life continues!</span>")
 		return
 
@@ -307,7 +310,7 @@
 	if(stat == DEAD)
 		return
 
-	if(health >= HEALTH_THRESHOLD_CRIT)
+	if(health >= HEALTH_THRESHOLD_SUCCUMB)
 		to_chat(src, "<span class='warning'>You are unable to succumb to death! This life continues!</span>")
 		return
 
@@ -359,6 +362,7 @@
 		return
 	health = maxHealth - getOxyLoss() - getToxLoss() - getFireLoss() - getBruteLoss() - getCloneLoss()
 
+	SEND_SIGNAL(src, COMSIG_LIVING_HEALTH_UPDATE)
 	update_stat("updatehealth([reason])")
 	med_hud_set_health()
 	med_hud_set_status()
@@ -387,8 +391,7 @@
 		temperature -= change
 		if(actual < desired)
 			temperature = desired
-//	if(istype(src, /mob/living/carbon/human))
-//		to_chat(world, "[src] ~ [bodytemperature] ~ [temperature]")
+
 	return temperature
 
 
@@ -412,7 +415,7 @@
 			if(isstorage(G.gift))
 				L += get_contents(G.gift)
 
-		for(var/obj/item/smallDelivery/D in Storage.return_inv()) //Check for package wrapped items
+		for(var/obj/item/small_delivery/D in Storage.return_inv()) //Check for package wrapped items
 			L += D.wrapped
 			if(isstorage(D.wrapped)) //this should never happen
 				L += get_contents(D.wrapped)
@@ -438,7 +441,7 @@
 			if(isstorage(G.gift))
 				L += get_contents(G.gift)
 
-		for(var/obj/item/smallDelivery/D in contents) //Check for package wrapped items
+		for(var/obj/item/small_delivery/D in contents) //Check for package wrapped items
 			L += D.wrapped
 			if(isstorage(D.wrapped)) //this should never happen
 				L += get_contents(D.wrapped)
@@ -537,7 +540,7 @@
 	on_fire = 0
 	suiciding = 0
 	if(buckled) //Unbuckle the mob and clear the alerts.
-		buckled.unbuckle_mob(src, force = TRUE)
+		unbuckle(force = TRUE)
 
 	if(iscarbon(src))
 		var/mob/living/carbon/C = src
@@ -660,6 +663,8 @@
 				var/mob/living/carbon/human/H = src
 				if(H.dna.species.blood_color)
 					existing_trail.color = H.dna.species.blood_color
+			else if(isalien(src))
+				existing_trail.color = "#05EE05"
 			else
 				existing_trail.color = "#A10808"
 
@@ -802,6 +807,10 @@
 	END RESIST PROCS
 *///////////////////////
 
+/// Unbuckle the mob from whatever it is buckled to.
+/mob/living/proc/unbuckle(force)
+	buckled.unbuckle_mob(src, force)
+
 /mob/living/proc/Exhaust()
 	to_chat(src, "<span class='notice'>You're too exhausted to keep going...</span>")
 	Weaken(10 SECONDS)
@@ -819,7 +828,7 @@
 		clear_alert("weightless")
 	else
 		throw_alert("weightless", /atom/movable/screen/alert/weightless)
-	if(!flying)
+	if(!HAS_TRAIT(src, TRAIT_FLYING))
 		float(!has_gravity)
 
 /mob/living/proc/float(on)
@@ -830,8 +839,7 @@
 		fixed = TRUE
 	if(on && !floating && !fixed)
 		animate(src, pixel_y = pixel_y + 2, time = 10, loop = -1)
-		sleep(10)
-		animate(src, pixel_y = pixel_y - 2, time = 10, loop = -1)
+		animate(pixel_y = pixel_y - 2, time = 10, loop = -1)
 		floating = TRUE
 	else if(((!on || fixed) && floating))
 		animate(src, pixel_y = get_standard_pixel_y_offset(), time = 10)
@@ -1048,9 +1056,9 @@
 		else
 			registered_z = null
 
-/mob/living/onTransitZ(old_z,new_z)
+/mob/living/on_changed_z_level(turf/old_turf, turf/new_turf)
 	..()
-	update_z(new_z)
+	update_z(new_turf?.z)
 
 /mob/living/rad_act(amount)
 	. = ..()
@@ -1108,7 +1116,7 @@
 	return ..()
 
 /mob/living/hit_by_thrown_mob(mob/living/C, datum/thrownthing/throwingdatum, damage, mob_hurt, self_hurt)
-	if(C == src || flying || !density)
+	if(C == src || HAS_TRAIT(src, TRAIT_FLYING) || !density)
 		return
 	playsound(src, 'sound/weapons/punch1.ogg', 50, 1)
 	if(mob_hurt)
@@ -1119,8 +1127,15 @@
 		C.adjustBruteLoss(damage)
 		C.Weaken(3 SECONDS)
 	else
-		C.take_organ_damage(damage)
+		var/obj/item/organ/external/affecting = C.get_organ(ran_zone(throwingdatum.target_zone))
+		if(affecting)
+			var/armor_block = C.run_armor_check(affecting, MELEE)
+			C.apply_damage(damage, BRUTE, affecting, armor_block)
+		else
+			C.take_organ_damage(damage)
+
 		C.KnockDown(3 SECONDS)
+
 	C.visible_message("<span class='danger'>[C] crashes into [src], knocking them both over!</span>", "<span class='userdanger'>You violently crash into [src]!</span>")
 
 /**
@@ -1165,11 +1180,30 @@
 	for(var/obj/O in src)
 		O.on_mob_move(Dir, src)
 
-/mob/living/Crossed(atom/movable/mover)
-	if(istype(mover, /obj/singularity/energy_ball))
-		dust()
-	return ..()
-
 /// Can a mob interact with the apc remotely like a pulse demon, cyborg, or AI?
 /mob/living/proc/can_remote_apc_interface(obj/machinery/power/apc/ourapc)
 	return FALSE
+
+/mob/living/proc/plushify(plushie_override, curse_time = 10 MINUTES)
+	var/mob/living/simple_animal/shade/sword/generic_item/plushvictim = new(get_turf(src))
+	var/obj/item/toy/plushie/plush_type = pick(subtypesof(/obj/item/toy/plushie) - typesof(/obj/item/toy/plushie/fluff) - typesof(/obj/item/toy/plushie/carpplushie)) //exclude the base type.
+	if(plushie_override)
+		plush_type = plushie_override
+	var/obj/item/toy/plushie/plush_outcome = new plush_type(get_turf(src))
+	plushvictim.forceMove(plush_outcome)
+	plushvictim.key = key
+	plushvictim.RegisterSignal(plush_outcome, COMSIG_PARENT_QDELETING, TYPE_PROC_REF(/mob/living/simple_animal/shade/sword/generic_item, handle_item_deletion))
+	plushvictim.name = name
+	plush_outcome.name = "[name] plushie"
+	if(curse_time == -1)
+		qdel(src)
+	else
+		plush_outcome.cursed_plushie_victim = src
+		forceMove(plush_outcome)
+		notransform = TRUE
+		status_flags |= GODMODE
+		addtimer(CALLBACK(plush_outcome, TYPE_PROC_REF(/obj/item/toy/plushie, un_plushify)), curse_time)
+	to_chat(plushvictim, "<span class='warning'>You have been cursed into an enchanted plush doll! At least you can still move around a bit...</span>")
+
+/mob/living/proc/sec_hud_set_ID()
+	return
